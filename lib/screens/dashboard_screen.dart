@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/stats_card.dart';
 import '../widgets/notification_card.dart';
 import '../widgets/custom_nav_bar.dart';
-import '../utils/theme_provider.dart';
 import '../utils/routes.dart';
 
 class DashboardScreen extends StatefulWidget {
