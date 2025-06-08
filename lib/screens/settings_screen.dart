@@ -115,18 +115,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ValueListenableBuilder(
               valueListenable: gender,
               builder: (context, value, _) => DropdownButtonFormField<String>(
-              value: value as String?,
-              items: ["Male", "Female"]
-                  .map((g) => DropdownMenuItem<String>(
-                        value: g,
-                        child: Text(g),
-                      ))
-                  .toList(),
-              onChanged: (String? val) {
-                if (val != null) gender.value = val;
-              },
-              decoration: const InputDecoration(labelText: "Gender"),
-            ),
+                value: value as String,
+                items: ["Male", "Female"].map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
+                onChanged: (val) {
+                  if (val != null) gender.value = val;
+                },
+                decoration: const InputDecoration(labelText: "Gender"),
+              ),
             ),
             const SizedBox(height: 8),
             Text("Current Height: $height"),
@@ -155,49 +150,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     return Scaffold(
       appBar: CustomAppBar(title: 'Settings'),
-      body: ListView(
-        children: [
-          if (daysSinceUpdate >= 7)
-            ListTile(
-              tileColor: Colors.orange[50],
-              title: const Text("⏳ Please update your child's height & weight."),
-              trailing: ElevatedButton(
-                onPressed: _showHeightWeightDialog,
-                child: const Text("Update"),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 600),
+        child: ListView(
+          key: const ValueKey("settingsList"),
+          children: [
+            if (daysSinceUpdate >= 7)
+              ListTile(
+                tileColor: Colors.orange[50],
+                title: const Text("⏳ Please update your child's height & weight."),
+                trailing: ElevatedButton(
+                  onPressed: _showHeightWeightDialog,
+                  child: const Text("Update"),
+                ),
               ),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Edit User Info'),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () => _editUserInfo(context),
             ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text('Edit User Info'),
-            trailing: const Icon(Icons.edit),
-            onTap: () => _editUserInfo(context),
-          ),
-          const Divider(height: 1),
-          ListTile(
-            leading: const Icon(Icons.child_care),
-            title: const Text('Edit Child Info'),
-            trailing: const Icon(Icons.edit),
-            onTap: () => _editChildInfo(context),
-          ),
-          const Divider(height: 1),
-          ListTile(
-            leading: const Icon(Icons.local_drink),
-            title: const Text('Feeding Schedule'),
-            trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              Navigator.pushNamed(context, AppRoutes.feeding);
-            },
-          ),
-          const Divider(height: 1),
-          ListTile(
-            leading: const Icon(Icons.vaccines),
-            title: const Text('Vaccination Schedule'),
-            trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              Navigator.pushNamed(context, AppRoutes.vaccines);
-            },
-          ),
-        ],
+            const Divider(height: 1),
+            ListTile(
+              leading: const Icon(Icons.child_care),
+              title: const Text('Edit Child Info'),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () => _editChildInfo(context),
+            ),
+          ],
+        ),
       ),
     );
   }
