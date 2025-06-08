@@ -15,32 +15,12 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  DateTime? lastUpdate;
-  final int ageInWeeks = 64; // ← يمكن تعديله لاحقاً حسب البيانات الفعلية
-
-  @override
-  void initState() {
-    super.initState();
-    _loadLastUpdate();
-  }
-
-  Future<void> _loadLastUpdate() async {
-    final prefs = await SharedPreferences.getInstance();
-    final timestamp = prefs.getInt('last_height_weight_update');
-    if (timestamp != null) {
-      setState(() {
-        lastUpdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
-      });
-    }
-  }
+  final int ageInWeeks = 64;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final color = theme.colorScheme.primary;
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final now = DateTime.now();
-    final daysSinceUpdate = lastUpdate == null ? 999 : now.difference(lastUpdate!).inDays;
 
     return Scaffold(
       appBar: AppBar(
@@ -92,6 +72,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             ),
           ),
+
           const SizedBox(height: 20),
 
           // ✅ المربعات الثلاثة
@@ -126,47 +107,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
-
-          const SizedBox(height: 16),
-
-          // ✅ إشعار تحديث الطول والوزن
-          if (daysSinceUpdate >= 7)
-            Container(
-              padding: const EdgeInsets.all(12),
-              margin: const EdgeInsets.only(top: 8),
-              decoration: BoxDecoration(
-                color: Colors.orange[100],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.warning_amber, color: Colors.deepOrange),
-                  const SizedBox(width: 10),
-                  const Expanded(
-                    child: Text("Don't forget to update your baby's height & weight."),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.settings);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange,
-                      foregroundColor: Colors.white,
-                    ),
-                    child: const Text("Update"),
-                  ),
-                ],
-              ),
-            ),
         ],
       ),
-
-      // ✅ تم استرجاع الشريط السفلي
       bottomNavigationBar: const CustomNavBar(),
     );
   }
 
-  // 🔷 تصميم مربعات Sleep - Feeding - Schedule
   Widget _featureBox(BuildContext context, IconData icon, String label, VoidCallback onTap) {
     return Expanded(
       child: GestureDetector(
