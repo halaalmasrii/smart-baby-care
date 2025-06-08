@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widgets/stats_card.dart';
-import '../widgets/notification_card.dart';
 import '../widgets/custom_nav_bar.dart';
 import '../utils/routes.dart';
 
@@ -11,8 +10,28 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _DashboardScreenState extends State<DashboardScreen>
+    with SingleTickerProviderStateMixin {
   final int ageInWeeks = 64;
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller =
+        AnimationController(duration: const Duration(milliseconds: 500), vsync: this);
+    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,77 +53,81 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Baby Layan',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
-                Text('$ageInWeeks weeks old',
-                    style: const TextStyle(fontSize: 12, color: Colors.white70)),
+                const Text(
+                  'Baby Layan',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+                Text(
+                  '$ageInWeeks weeks old',
+                  style: const TextStyle(fontSize: 12, color: Colors.white70),
+                ),
               ],
             ),
           ],
         ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          const StatsCard(),
-          const SizedBox(height: 20),
-          const NotificationCard(),
-          const SizedBox(height: 20),
+      body: ScaleTransition(
+        scale: _scaleAnimation,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            const StatsCard(),
+            const SizedBox(height: 20),
 
-          // ✅ Today Info
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: theme.cardColor,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+            // ✅ Today Info
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: theme.cardColor,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text("Today Baby Info", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 10),
+                  Text("Height: 68 cm"),
+                  Text("Weight: 7.5 kg"),
+                ],
+              ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text("Today Baby Info", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                SizedBox(height: 10),
-                Text("Height: 68 cm"),
-                Text("Weight: 7.5 kg"),
+            const SizedBox(height: 20),
+
+            // ✅ المربعات الثلاثة
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _featureBox(context, Icons.bedtime, "Sleep", () {
+                  Navigator.pushNamed(context, AppRoutes.sleepTimer);
+                }),
+                _featureBox(context, Icons.local_drink, "Feeding", () {
+                  Navigator.pushNamed(context, AppRoutes.feeding);
+                }),
+                _featureBox(context, Icons.vaccines, "Schedule", () {
+                  Navigator.pushNamed(context, AppRoutes.vaccines);
+                }),
               ],
             ),
-          ),
+            const SizedBox(height: 20),
 
-          const SizedBox(height: 20),
-
-          // ✅ المربعات الثلاثة
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _featureBox(context, Icons.bedtime, "Sleep", () {
-                Navigator.pushNamed(context, AppRoutes.sleepTimer);
-              }),
-              _featureBox(context, Icons.local_drink, "Feeding", () {
-                Navigator.pushNamed(context, AppRoutes.feeding);
-              }),
-              _featureBox(context, Icons.vaccines, "Schedule", () {
-                Navigator.pushNamed(context, AppRoutes.vaccines);
-              }),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-
-          // ✅ زر Status
-          ElevatedButton.icon(
-            onPressed: () {
-              Navigator.pushNamed(context, AppRoutes.status);
-            },
-            icon: const Icon(Icons.analytics),
-            label: const Text("Status"),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: theme.colorScheme.primary,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            // ✅ زر Status
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.status);
+              },
+              icon: const Icon(Icons.analytics),
+              label: const Text("Status"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                elevation: 5,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       bottomNavigationBar: const CustomNavBar(),
     );
@@ -114,7 +137,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
           height: 90,
           margin: const EdgeInsets.symmetric(horizontal: 4),
           decoration: BoxDecoration(
