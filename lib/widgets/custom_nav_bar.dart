@@ -16,10 +16,6 @@ class CustomNavBar extends StatelessWidget {
       type: BottomNavigationBarType.fixed,
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: Icon(Icons.home_rounded),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
           icon: Icon(Icons.videocam),
           label: 'Monitor',
         ),
@@ -40,19 +36,16 @@ class CustomNavBar extends StatelessWidget {
       onTap: (index) {
         switch (index) {
           case 0:
-            Navigator.pushNamed(context, AppRoutes.dashboard);
+            Navigator.pushNamed(context, AppRoutes.monitoring); // ✅ Monitor
             break;
           case 1:
-            Navigator.pushNamed(context, AppRoutes.monitoring);
+            Navigator.pushNamed(context, AppRoutes.notifications); // ✅ Alerts
             break;
           case 2:
-            Navigator.pushNamed(context, AppRoutes.notifications);
+            Navigator.pushNamed(context, AppRoutes.babySound); // ✅ Sounds
             break;
           case 3:
-            Navigator.pushNamed(context, AppRoutes.babySound);
-            break;
-          case 4:
-            Navigator.pushNamed(context, AppRoutes.settings);
+            Navigator.pushNamed(context, AppRoutes.settings); // ✅ Settings
             break;
         }
       },
