@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+
 import 'utils/theme_provider.dart';
 import 'utils/routes.dart';
-import 'services/auth_service.dart'; // ✅ مهم جداً لإدارة تسجيل الدخول
+import 'services/auth_service.dart'; // ✅ إدارة الدخول
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  tz.initializeTimeZones(); // ✅ ضروري قبل جدولة الإشعارات
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => AuthService()), // ✅ أضفناه هنا
+        ChangeNotifierProvider(create: (_) => AuthService()),
       ],
       child: const MyApp(),
     ),
@@ -28,7 +34,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: themeProvider.themeData,
       routes: AppRoutes.routes,
-      initialRoute: AppRoutes.login, // يبدأ من شاشة تسجيل الدخول
+      initialRoute: AppRoutes.login,
     );
   }
 }

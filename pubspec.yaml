@@ -15,6 +15,9 @@ dependencies:
   shared_preferences: ^2.2.2
   fl_chart: ^0.64.0
   flutter_local_notifications: ^16.3.0
+  assets_audio_player: ^3.0.3+6
+  audioplayers: ^5.2.1
+  timezone: ^0.9.4
 
 
 dev_dependencies:
@@ -24,3 +27,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/sounds/notification_sound.wav
