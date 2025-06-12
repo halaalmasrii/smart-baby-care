@@ -4,7 +4,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import '../models/appointment.dart';
-
 import 'dart:convert';
 
 class NotificationsScreen extends StatefulWidget {
@@ -59,39 +58,41 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   Future<void> scheduleNotifications() async {
-    for (final appointment in upcomingAppointments) {
-      final scheduledDate = appointment.date ?? DateTime.now();
-      final scheduledTime = appointment.time ?? TimeOfDay.now();
+  for (final appointment in upcomingAppointments) {
+    if (appointment.isNotificationDone) continue; // ✅ تجاهل المواعيد المكتملة
 
-      final tzDateTime = tz.TZDateTime.from(
-        DateTime(scheduledDate.year, scheduledDate.month, scheduledDate.day,
-            scheduledTime.hour, scheduledTime.minute),
-        tz.local,
-      );
+    final scheduledDate = appointment.date ?? DateTime.now();
+    final scheduledTime = appointment.time ?? TimeOfDay.now();
 
-      await flutterLocalNotificationsPlugin.zonedSchedule(
-        int.parse(appointment.id),
-        getNotificationTitle(appointment.type),
-        getNotificationBody(appointment.type),
-        tzDateTime,
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            'general_channel',
-            'General Notifications',
-            channelDescription: 'General alerts',
-            importance: Importance.max,
-            priority: Priority.high,
-            playSound: true,
-            autoCancel: true,
-          ),
+    final tzDateTime = tz.TZDateTime.from(
+      DateTime(scheduledDate.year, scheduledDate.month, scheduledDate.day,
+          scheduledTime.hour, scheduledTime.minute),
+      tz.local,
+    );
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      int.parse(appointment.id),
+      getNotificationTitle(appointment.type),
+      getNotificationBody(appointment.type),
+      tzDateTime,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'general_channel',
+          'General Notifications',
+          channelDescription: 'General alerts',
+          importance: Importance.max,
+          priority: Priority.high,
+          playSound: true,
+          autoCancel: true,
         ),
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        payload: appointment.id,
-      );
-    }
+      ),
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      payload: appointment.id,
+    );
   }
+}
 
   String getNotificationTitle(AppointmentType type) {
     switch (type) {
@@ -132,12 +133,21 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
-  void markAsDone(String id) {
-    setState(() {
-      upcomingAppointments.removeWhere((appt) => appt.id == id);
-    });
-    flutterLocalNotificationsPlugin.cancel(int.parse(id));
-  }
+    Future<void> markAsDone(String id) async {
+      await flutterLocalNotificationsPlugin.cancel(int.parse(id));
+
+      final index = upcomingAppointments.indexWhere((appt) => appt.id == id);
+      if (index != -1) {
+        setState(() {
+          upcomingAppointments[index] = upcomingAppointments[index].copyWith(isNotificationDone: true);
+        });
+
+        final prefs = await SharedPreferences.getInstance();
+        final updatedJsonList = upcomingAppointments.map((appt) => jsonEncode(appt.toJson())).toList(); // ✅ هنا التعديل
+        prefs.setStringList('appointments', updatedJsonList);
+      }
+    }
+
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +156,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notifications & Appointments'),
+        title: const Text('Notifications'),
         backgroundColor: color,
       ),
       body: Padding(
@@ -154,51 +164,53 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                itemCount: upcomingAppointments.length,
-                itemBuilder: (context, index) {
-                  final appointment = upcomingAppointments[index];
-                  final timeUntil = appointment.date!
-                      .difference(now)
-                      .inHours
-                      .abs()
-                      .toString()
-                      .padLeft(2, '0');
+  child: ListView.builder(
+    itemCount: upcomingAppointments.length,
+    itemBuilder: (context, index) {
+      final appointment = upcomingAppointments[index];
+      final timeUntil = appointment.date!
+          .difference(now)
+          .inHours
+          .abs()
+          .toString()
+          .padLeft(2, '0');
 
-                  return Card(
-                    color: theme.cardColor,
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 2,
-                    child: ListTile(
-                      leading: getAppointmentIcon(appointment.type, color),
-                      title: Text(
-                        '${appointment.title} - ${getNotificationTitle(appointment.type)}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: color,
-                        ),
-                      ),
-                      subtitle: Text(
-                        'In $timeUntil hours • ${appointment.date!.toLocal().toString()}',
-                        style: const TextStyle(color: Colors.black54),
-                      ),
-                      trailing: ElevatedButton(
-                        onPressed: () => markAsDone(appointment.id),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.colorScheme.primary,
-                          foregroundColor: Colors.white,
-                          minimumSize: const Size(80, 36),
-                        ),
-                        child: const Text('Done'),
-                      ),
-                    ),
-                  );
-                },
-              ),
+      
+      return Card(
+        color: appointment.isNotificationDone ? Colors.grey[300] : theme.cardColor,
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 2,
+        child: ListTile(
+          leading: getAppointmentIcon(appointment.type, color),
+          title: Text(
+            '${appointment.title} - ${getNotificationTitle(appointment.type)}',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: appointment.isNotificationDone ? Colors.grey : color,
+              decoration: appointment.isNotificationDone ? TextDecoration.lineThrough : null,
             ),
+          ),
+          subtitle: Text(
+            'In $timeUntil hours • ${appointment.date!.toLocal().toString()}',
+            style: const TextStyle(color: Colors.black54),
+          ),
+          trailing: ElevatedButton(
+            onPressed: () => markAsDone(appointment.id),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: appointment.isNotificationDone
+                  ? Colors.grey
+                  : theme.colorScheme.primary,
+              foregroundColor: Colors.white,
+              minimumSize: const Size(80, 36),
+            ),
+            child: const Text('Done'),
+          ),
+                  ),
+                );
+              },
+            ),
+          ),
             const SizedBox(height: 20),
             const Center(
               child: Text(
