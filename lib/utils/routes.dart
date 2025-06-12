@@ -9,12 +9,11 @@ import '../screens/settings_screen.dart';
 import '../screens/notifications_screen.dart';
 import '../screens/baby_sound_screen.dart';
 import '../screens/schedule_screen.dart';
-import '../screens/vaccination_schedule_screen.dart';
 import '../screens/child_info_screen.dart';
 import '../screens/signup_screen.dart';
 import '../screens/sleep_timer_screen.dart';
 import '../screens/status_screen.dart';
-
+import '../screens/vaccination_schedule_screen.dart';
 
 
 class AppRoutes {
@@ -29,11 +28,11 @@ class AppRoutes {
   static const String notifications = '/notifications';
   static const String babySound = '/babySound';
   static const String feeding = '/feeding';
-  static const String vaccines = '/vaccines';
   static const String childInfo = '/childInfo';
   static const String signup = '/signup';
   static const String sleepTimer = '/sleep-timer';       
   static const String status = '/status'; 
+  static const String vaccines = '/vaccines';
 
   static final routes = {
     login: (context) => LoginScreen(),
@@ -47,10 +46,10 @@ class AppRoutes {
     notifications: (context) => NotificationsScreen(),
     babySound: (context) => BabySoundScreen(),  
     feeding: (context) => const FeedingScheduleScreen(),
-    vaccines: (context) => const VaccinationScheduleScreen(),
     childInfo: (context) => const ChildInfoScreen(),
     signup: (context) => const SignUpScreen(),
     sleepTimer: (context) => const SleepTimerScreen(),
     status: (context) => StatusScreen(),
+    vaccines: (context) => const VaccinationScheduleScreen(),
   };
 }
