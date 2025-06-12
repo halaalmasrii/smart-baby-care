@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
 import '../utils/routes.dart';
 import '../utils/theme_provider.dart';
+import '../utils/validation_utils.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -14,6 +15,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _obscurePassword = true; // لإظهار أو إخفاء كلمة المرور
 
   @override
   void dispose() {
@@ -73,15 +75,25 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // ✅ Password field
+                  // ✅ Password field with visibility toggle
                   TextField(
                     controller: _passwordController,
-                    obscureText: true,
+                    obscureText: _obscurePassword,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.lock),
                       labelText: 'Password',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
                       ),
                     ),
                   ),
@@ -98,6 +110,20 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (email.isEmpty || password.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Please fill in all fields')),
+                          );
+                          return;
+                        }
+
+                        if (!ValidationUtils.isValidEmail(email)) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Please enter a valid email address')),
+                          );
+                          return;
+                        }
+
+                        if (!ValidationUtils.isValidPassword(password)) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Password must be at least 8 characters')),
                           );
                           return;
                         }
