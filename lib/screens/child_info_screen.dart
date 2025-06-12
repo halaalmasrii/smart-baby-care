@@ -13,10 +13,11 @@ class ChildInfoScreen extends StatefulWidget {
 class _ChildInfoScreenState extends State<ChildInfoScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  DateTime? _birthDate;
-  String _gender = 'Male';
   final _heightController = TextEditingController();
   final _weightController = TextEditingController();
+
+  DateTime? _birthDate;
+  String _gender = 'Male';
   File? _imageFile;
 
   Future<void> _pickImage() async {
@@ -28,13 +29,36 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
     }
   }
 
+  // ✅ التحقق من صحة الاسم
+  bool _isValidName(String? value) {
+    if (value == null || value.isEmpty) return false;
+    final nameRegex = RegExp(r'^[a-zA-Z ]+$');
+    return value.length >= 3 && nameRegex.hasMatch(value);
+  }
+
+  // ✅ التحقق من التاريخ
+  bool _isDateValid(DateTime? date) => date != null && !date.isAfter(DateTime.now());
+
+  // ✅ التحقق من الرقم
+  bool _isNumeric(String? value) {
+    if (value == null || value.isEmpty) return false;
+    return RegExp(r'^[0-9]+$').hasMatch(value);
+  }
+
   void _submit() {
-    if (_formKey.currentState!.validate() && _birthDate != null) {
-      // يمكنك هنا حفظ معلومات الطفل وربطها بالمستخدم في قاعدة البيانات
+    if (_formKey.currentState!.validate()) {
+      if (!_isDateValid(_birthDate)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select a valid birth date')),
+        );
+        return;
+      }
+
+      // ✅ هنا يتم حفظ البيانات أو إرسالها إلى الباك
       Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please complete all fields')),
+        const SnackBar(content: Text('Please complete all fields correctly')),
       );
     }
   }
@@ -55,6 +79,7 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
           key: _formKey,
           child: ListView(
             children: [
+              // ✅ صورة الطفل
               GestureDetector(
                 onTap: _pickImage,
                 child: CircleAvatar(
@@ -66,12 +91,20 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
                 ),
               ),
               const SizedBox(height: 16),
+
+              // ✅ الاسم
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(labelText: 'Child Name'),
-                validator: (value) => value!.isEmpty ? 'Enter name' : null,
+                validator: (value) {
+                  if (value!.isEmpty) return 'Enter child name';
+                  if (!_isValidName(value)) return 'Name must be at least 3 letters';
+                  return null;
+                },
               ),
               const SizedBox(height: 12),
+
+              // ✅ تاريخ الميلاد
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 title: Text(
@@ -91,6 +124,8 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
                 },
               ),
               const SizedBox(height: 12),
+
+              // ✅ الجنس
               DropdownButtonFormField<String>(
                 value: _gender,
                 items: ['Male', 'Female']
@@ -100,20 +135,35 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
                 decoration: const InputDecoration(labelText: 'Gender'),
               ),
               const SizedBox(height: 12),
+
+              // ✅ الطول
               TextFormField(
                 controller: _heightController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(labelText: 'Height (cm)'),
-                validator: (value) => value!.isEmpty ? 'Enter height' : null,
+                validator: (value) {
+                  if (value!.isEmpty) return 'Enter height';
+                  if (!_isNumeric(value)) return 'Height must be a number';
+                  return null;
+                },
               ),
               const SizedBox(height: 12),
+
+              // ✅ الوزن
               TextFormField(
                 controller: _weightController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(labelText: 'Weight (kg)'),
-                validator: (value) => value!.isEmpty ? 'Enter weight' : null,
+                validator: (value) {
+                  if (value!.isEmpty) return 'Enter weight';
+                  if (!_isNumeric(value)) return 'Weight must be a number';
+                  return null;
+                },
               ),
+
               const SizedBox(height: 24),
+
+              // ✅ زر الحفظ
               ElevatedButton(
                 onPressed: _submit,
                 style: ElevatedButton.styleFrom(
