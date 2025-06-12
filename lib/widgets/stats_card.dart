@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
 
 class StatsCard extends StatelessWidget {
-  const StatsCard({Key? key}) : super(key: key);
+  final String sleep;
+  final String feeding;
+  final String height;
+  final String weight;
+
+  const StatsCard({
+    Key? key,
+    required this.sleep,
+    required this.feeding,
+    required this.height,
+    required this.weight,
+  }) : super(key: key);
 
   Widget _buildStatItem(IconData icon, String label, String value, Color color) {
     return Column(
@@ -20,6 +31,9 @@ class StatsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+    final secondary = theme.colorScheme.secondary;
+
     return Card(
       elevation: 3,
       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -36,9 +50,9 @@ class StatsCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildStatItem(Icons.bedtime, 'Sleep', '7 hrs', theme.colorScheme.primary),
-                _buildStatItem(Icons.local_dining, 'Feeding', '5 times', theme.colorScheme.secondary),
-                _buildStatItem(Icons.sentiment_dissatisfied, 'Crying', '2 times', Colors.redAccent),
+                _buildStatItem(Icons.bedtime, 'Sleep', sleep, primary),
+                _buildStatItem(Icons.local_dining, 'Feeding', feeding, secondary),
+                _buildStatItem(Icons.bar_chart, 'Height/Weight', '$height / $weight', primary),
               ],
             )
           ],
