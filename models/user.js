@@ -5,6 +5,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  userType: {  
+    type: String,
+    enum: ['Mother', 'Father', 'Other'],
+    default: 'Mother'
+  },
   email: {
     type: String,
     required: true,

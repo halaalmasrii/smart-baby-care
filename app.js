@@ -12,7 +12,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-/*
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads');
@@ -24,14 +24,18 @@ const storage = multer.diskStorage({
 
 app.use(multer({
   storage:storage}).fields(
-    [{name:'image'},{name:'cv'}]
+    [{name:'image'}]
   ));
-*/
+
 
  app.use( cors({
-     origin: "http://localhost:3001", 
+     origin: "http://localhost:3001",
+     credentials: true 
    })
  );
+
+ const cookieParser = require('cookie-parser');
+app.use(cookieParser());
 
 app.use(express.json());
 mongoose.connect(process.env.MONGODB_URI, {
