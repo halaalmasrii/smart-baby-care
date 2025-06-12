@@ -1,7 +1,9 @@
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/routes.dart';
 import '../utils/theme_provider.dart';
+import '../utils/validation_utils.dart';  
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -17,22 +19,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   String _userType = 'Mother';
-
-  bool _passwordVisible = false; // ✅ لعرض/إخفاء كلمة المرور
-
-  // ✅ التحقق من الاسم
-  bool _isValidName(String? name) {
-    if (name == null || name.isEmpty) return false;
-    final nameRegex = RegExp(r'^[a-zA-Z ]+$');
-    return name.length >= 3 && nameRegex.hasMatch(name);
-  }
-
-  // ✅ التحقق من البريد الإلكتروني
-  bool _isValidEmail(String? email) {
-    if (email == null || email.isEmpty) return false;
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    return emailRegex.hasMatch(email);
-  }
+  bool _passwordVisible = false;
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
@@ -58,16 +45,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 40),
-
-                  // ✅ Logo
                   CircleAvatar(
                     radius: 40,
                     backgroundColor: colorScheme.primary,
                     child: const Icon(Icons.child_friendly, size: 50, color: Colors.white),
                   ),
                   const SizedBox(height: 16),
-
-                  // ✅ App Name
                   Text(
                     'Smart BabyCare',
                     style: theme.textTheme.headlineMedium?.copyWith(
@@ -76,13 +59,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                   const SizedBox(height: 40),
-
-                  // ✅ Form
                   Form(
                     key: _formKey,
                     child: Column(
                       children: [
-                        // Full Name
+                        //  استخدام ValidationUtils
                         TextFormField(
                           controller: _nameController,
                           decoration: const InputDecoration(
@@ -92,13 +73,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           validator: (value) {
                             if (value!.isEmpty) return 'Please enter your name';
-                            if (!_isValidName(value)) return 'Name must be at least 3 letters';
+                            if (!ValidationUtils.isValidName(value)) return 'Name must be at least 3 letters';
                             return null;
                           },
                         ),
                         const SizedBox(height: 16),
-
-                        // Email
                         TextFormField(
                           controller: _emailController,
                           decoration: const InputDecoration(
@@ -109,13 +88,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value!.isEmpty) return 'Please enter your email';
-                            if (!_isValidEmail(value)) return 'Please enter a valid email';
+                            if (!ValidationUtils.isValidEmail(value)) return 'Please enter a valid email';
                             return null;
                           },
                         ),
                         const SizedBox(height: 16),
-
-                        // User Type
                         DropdownButtonFormField<String>(
                           value: _userType,
                           items: ['Mother', 'Father', 'Other']
@@ -129,8 +106,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
-
-                        // Password
                         TextFormField(
                           controller: _passwordController,
                           obscureText: !_passwordVisible,
@@ -152,13 +127,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           validator: (value) {
                             if (value!.isEmpty) return 'Please enter a password';
-                            if (value.length < 8) return 'Password must be at least 8 characters';
+                            if (!ValidationUtils.isValidPassword(value)) return 'Password must be at least 8 characters';
                             return null;
                           },
                         ),
                         const SizedBox(height: 16),
-
-                        // Confirm Password
                         TextFormField(
                           controller: _confirmPasswordController,
                           obscureText: !_passwordVisible,
@@ -179,13 +152,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                           ),
                           validator: (value) {
-                            if (value != _passwordController.text) return 'Passwords do not match';
+                            if (!ValidationUtils.passwordsMatch(
+                              _passwordController.text,
+                              value,
+                            )) {
+                              return 'Passwords do not match';
+                            }
                             return null;
                           },
                         ),
                         const SizedBox(height: 30),
-
-                        // Sign Up Button
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -204,8 +180,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
-
-                        // Already have account
                         TextButton(
                           onPressed: () {
                             Navigator.pop(context);
@@ -218,8 +192,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ],
               ),
             ),
-
-            // ✅ Theme toggle button
             Positioned(
               top: 10,
               right: 10,
