@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/stats_card.dart';
 import '../widgets/custom_nav_bar.dart';
 import '../utils/routes.dart';
+import '../utils/theme_provider.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -37,6 +39,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final color = theme.colorScheme.primary;
+    final themeProvider = Provider.of<ThemeProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -65,33 +68,28 @@ class _DashboardScreenState extends State<DashboardScreen>
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.color_lens, color: Colors.white),
+            tooltip: "Toggle Theme",
+            onPressed: () {
+              themeProvider.toggleTheme();
+            },
+          )
+        ],
       ),
       body: ScaleTransition(
         scale: _scaleAnimation,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            const StatsCard(),
-            const SizedBox(height: 20),
-
-            // ✅ Today Info
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: theme.cardColor,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text("Today Baby Info", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 10),
-                  Text("Height: 68 cm"),
-                  Text("Weight: 7.5 kg"),
-                ],
-              ),
-            ),
+            // ✅ StatsCard الجديدة مع Info بدل cry
+            StatsCard(
+            sleep: '7 hrs',
+            feeding: '5 times',
+            height: '68 cm',
+            weight: '7.5 kg',
+          ),
             const SizedBox(height: 20),
 
             // ✅ المربعات الثلاثة
