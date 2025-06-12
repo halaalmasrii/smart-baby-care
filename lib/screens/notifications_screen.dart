@@ -3,8 +3,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import '../widgets/custom_app_bar.dart';
-import '../utils/routes.dart';
+import '../models/appointment.dart';
+
+import 'dart:convert';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({Key? key}) : super(key: key);
@@ -14,135 +15,199 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
-  DateTime? lastUpdate;
-  bool showFeedingReminder = true;
-
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+  List<Appointment> upcomingAppointments = [];
+  final DateTime now = DateTime.now();
 
   @override
   void initState() {
     super.initState();
-    tz.initializeTimeZones(); // ✅ تهيئة التايمزون
-    _loadLastUpdate();
-    _initializeNotifications();
-    _scheduleFeedingNotification(); // ✅ جدولة الإشعار
+    initializeTimeZones();
+    setupNotificationChannels();
+    loadUpcomingAppointments();
+    scheduleNotifications();
   }
 
-  Future<void> _loadLastUpdate() async {
-    final prefs = await SharedPreferences.getInstance();
-    final timestamp = prefs.getInt('last_height_weight_update');
-    if (timestamp != null) {
-      setState(() {
-        lastUpdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
-      });
-    }
+  Future<void> initializeTimeZones() async {
+    tz.initializeTimeZones();
+    final location = tz.getLocation('Europe/Istanbul');
+    tz.setLocalLocation(location);
   }
 
-  Future<void> _initializeNotifications() async {
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const initSettings = InitializationSettings(android: androidSettings);
+  Future<void> setupNotificationChannels() async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     await flutterLocalNotificationsPlugin.initialize(
-      initSettings,
+      InitializationSettings(android: initializationSettingsAndroid),
       onDidReceiveNotificationResponse: (details) {
-        if (details.payload == 'feeding') {
-          Navigator.pushNamed(context, AppRoutes.feeding);
-        }
+        print('Notification tapped: ${details.payload}');
       },
     );
   }
 
-  Future<void> _scheduleFeedingNotification() async {
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      0,
-      'Feeding Reminder',
-      'It’s been 3 hours since the last feeding.',
-      tz.TZDateTime.now(tz.local).add(const Duration(hours: 3)),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'feeding_channel',
-          'Feeding Alerts',
-          channelDescription: 'Alerts after 3 hours from last feeding',
-          importance: Importance.max,
-          priority: Priority.high,
-          sound: RawResourceAndroidNotificationSound('notification_sound'),
-        ),
-      ),
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-      payload: 'feeding',
-    );
+  Future<void> loadUpcomingAppointments() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedAppointments = prefs.getStringList('appointments') ?? [];
+
+    setState(() {
+      upcomingAppointments = savedAppointments
+          .map((json) => Appointment.fromJson(jsonDecode(json)))
+          .toList();
+    });
   }
 
-  void _handleFeedingReminderTap() {
-    Navigator.pushNamed(context, AppRoutes.feeding).then((_) {
-      setState(() {
-        showFeedingReminder = false;
-      });
+  Future<void> scheduleNotifications() async {
+    for (final appointment in upcomingAppointments) {
+      final scheduledDate = appointment.date ?? DateTime.now();
+      final scheduledTime = appointment.time ?? TimeOfDay.now();
+
+      final tzDateTime = tz.TZDateTime.from(
+        DateTime(scheduledDate.year, scheduledDate.month, scheduledDate.day,
+            scheduledTime.hour, scheduledTime.minute),
+        tz.local,
+      );
+
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        int.parse(appointment.id),
+        getNotificationTitle(appointment.type),
+        getNotificationBody(appointment.type),
+        tzDateTime,
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'general_channel',
+            'General Notifications',
+            channelDescription: 'General alerts',
+            importance: Importance.max,
+            priority: Priority.high,
+            playSound: true,
+            autoCancel: true,
+          ),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        payload: appointment.id,
+      );
+    }
+  }
+
+  String getNotificationTitle(AppointmentType type) {
+    switch (type) {
+      case AppointmentType.vaccine:
+        return 'Vaccine Reminder';
+      case AppointmentType.doctor:
+        return 'Doctor Appointment';
+      case AppointmentType.medicine:
+        return 'Medicine Intake';
+      default:
+        return 'Appointment Reminder';
+    }
+  }
+
+  String getNotificationBody(AppointmentType type) {
+    switch (type) {
+      case AppointmentType.vaccine:
+        return 'Don\'t forget your baby\'s vaccine appointment!';
+      case AppointmentType.doctor:
+        return 'Your medical consultation is coming up.';
+      case AppointmentType.medicine:
+        return 'It\'s time to give your baby their medicine.';
+      default:
+        return 'An appointment is scheduled soon.';
+    }
+  }
+
+  Icon getAppointmentIcon(AppointmentType type, Color primaryColor) {
+    switch (type) {
+      case AppointmentType.vaccine:
+        return Icon(Icons.vaccines, color: primaryColor);
+      case AppointmentType.doctor:
+        return Icon(Icons.person_pin_circle, color: primaryColor.withBlue(160));
+      case AppointmentType.medicine:
+        return Icon(Icons.medication, color: Colors.orangeAccent);
+      default:
+        return const Icon(Icons.event, color: Colors.grey);
+    }
+  }
+
+  void markAsDone(String id) {
+    setState(() {
+      upcomingAppointments.removeWhere((appt) => appt.id == id);
     });
+    flutterLocalNotificationsPlugin.cancel(int.parse(id));
   }
 
   @override
   Widget build(BuildContext context) {
-    final daysSinceUpdate = lastUpdate == null
-        ? 999
-        : DateTime.now().difference(lastUpdate!).inDays;
+    final theme = Theme.of(context);
+    final color = theme.colorScheme.primary;
 
     return Scaffold(
-      appBar: CustomAppBar(title: 'Notifications'),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          if (showFeedingReminder) _buildNotificationCard(
-            icon: Icons.local_drink,
-            title: "It’s been 3 hours since the last feeding.",
-            subtitle: "Recommended to feed your baby now.",
-            buttonLabel: "Dismiss",
-            onPressed: () => setState(() => showFeedingReminder = false),
-            onTap: _handleFeedingReminderTap,
-          ),
-
-          const SizedBox(height: 16),
-
-          if (daysSinceUpdate >= 7) _buildNotificationCard(
-            icon: Icons.height,
-            title: "Height & Weight Update Needed",
-            subtitle: "Please update your baby's height and weight.",
-            buttonLabel: "Update",
-            onPressed: () {
-              Navigator.pushNamed(context, AppRoutes.settings);
-            },
-            onTap: () {
-              Navigator.pushNamed(context, AppRoutes.settings);
-            },
-          ),
-
-          const SizedBox(height: 20),
-          const Center(child: Text('Other Notifications Coming Soon...')),
-        ],
+      appBar: AppBar(
+        title: const Text('Notifications & Appointments'),
+        backgroundColor: color,
       ),
-    );
-  }
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: upcomingAppointments.length,
+                itemBuilder: (context, index) {
+                  final appointment = upcomingAppointments[index];
+                  final timeUntil = appointment.date!
+                      .difference(now)
+                      .inHours
+                      .abs()
+                      .toString()
+                      .padLeft(2, '0');
 
-  Widget _buildNotificationCard({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-    required String buttonLabel,
-    required VoidCallback onPressed,
-    required VoidCallback onTap,
-  }) {
-    return Card(
-      color: Colors.orange[50],
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.deepOrange),
-        title: Text(title),
-        subtitle: Text(subtitle),
-        trailing: TextButton(onPressed: onPressed, child: Text(buttonLabel)),
-        onTap: onTap,
+                  return Card(
+                    color: theme.cardColor,
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 2,
+                    child: ListTile(
+                      leading: getAppointmentIcon(appointment.type, color),
+                      title: Text(
+                        '${appointment.title} - ${getNotificationTitle(appointment.type)}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: color,
+                        ),
+                      ),
+                      subtitle: Text(
+                        'In $timeUntil hours • ${appointment.date!.toLocal().toString()}',
+                        style: const TextStyle(color: Colors.black54),
+                      ),
+                      trailing: ElevatedButton(
+                        onPressed: () => markAsDone(appointment.id),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: Colors.white,
+                          minimumSize: const Size(80, 36),
+                        ),
+                        child: const Text('Done'),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Center(
+              child: Text(
+                'All upcoming reminders will appear here',
+                style: TextStyle(color: Colors.grey),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
