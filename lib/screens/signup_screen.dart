@@ -18,9 +18,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _confirmPasswordController = TextEditingController();
   String _userType = 'Mother';
 
+  bool _passwordVisible = false; // ✅ لعرض/إخفاء كلمة المرور
+
+  // ✅ التحقق من الاسم
+  bool _isValidName(String? name) {
+    if (name == null || name.isEmpty) return false;
+    final nameRegex = RegExp(r'^[a-zA-Z ]+$');
+    return name.length >= 3 && nameRegex.hasMatch(name);
+  }
+
+  // ✅ التحقق من البريد الإلكتروني
+  bool _isValidEmail(String? email) {
+    if (email == null || email.isEmpty) return false;
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    return emailRegex.hasMatch(email);
+  }
+
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      // تسجيل المستخدم ثم الانتقال لصفحة معلومات الطفل
       Navigator.pushNamed(context, AppRoutes.childInfo);
     }
   }
@@ -43,14 +58,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 40),
-                  // Logo
+
+                  // ✅ Logo
                   CircleAvatar(
                     radius: 40,
                     backgroundColor: colorScheme.primary,
                     child: const Icon(Icons.child_friendly, size: 50, color: Colors.white),
                   ),
                   const SizedBox(height: 16),
-                  // App Name
+
+                  // ✅ App Name
                   Text(
                     'Smart BabyCare',
                     style: theme.textTheme.headlineMedium?.copyWith(
@@ -59,10 +76,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                   const SizedBox(height: 40),
+
+                  // ✅ Form
                   Form(
                     key: _formKey,
                     child: Column(
                       children: [
+                        // Full Name
                         TextFormField(
                           controller: _nameController,
                           decoration: const InputDecoration(
@@ -70,9 +90,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             labelText: 'Full Name',
                             border: OutlineInputBorder(),
                           ),
-                          validator: (value) => value!.isEmpty ? 'Please enter your name' : null,
+                          validator: (value) {
+                            if (value!.isEmpty) return 'Please enter your name';
+                            if (!_isValidName(value)) return 'Name must be at least 3 letters';
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 16),
+
+                        // Email
                         TextFormField(
                           controller: _emailController,
                           decoration: const InputDecoration(
@@ -81,9 +107,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             border: OutlineInputBorder(),
                           ),
                           keyboardType: TextInputType.emailAddress,
-                          validator: (value) => value!.isEmpty ? 'Please enter your email' : null,
+                          validator: (value) {
+                            if (value!.isEmpty) return 'Please enter your email';
+                            if (!_isValidEmail(value)) return 'Please enter a valid email';
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 16),
+
+                        // User Type
                         DropdownButtonFormField<String>(
                           value: _userType,
                           items: ['Mother', 'Father', 'Other']
@@ -97,28 +129,63 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
+
+                        // Password
                         TextFormField(
                           controller: _passwordController,
-                          obscureText: true,
-                          decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.lock),
+                          obscureText: !_passwordVisible,
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.lock),
                             labelText: 'Password',
-                            border: OutlineInputBorder(),
+                            border: const OutlineInputBorder(),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _passwordVisible = !_passwordVisible;
+                                });
+                              },
+                            ),
                           ),
-                          validator: (value) => value!.length < 6 ? 'Password must be at least 6 characters' : null,
+                          validator: (value) {
+                            if (value!.isEmpty) return 'Please enter a password';
+                            if (value.length < 8) return 'Password must be at least 8 characters';
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 16),
+
+                        // Confirm Password
                         TextFormField(
                           controller: _confirmPasswordController,
-                          obscureText: true,
-                          decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.lock_outline),
+                          obscureText: !_passwordVisible,
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.lock_outline),
                             labelText: 'Confirm Password',
-                            border: OutlineInputBorder(),
+                            border: const OutlineInputBorder(),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _passwordVisible = !_passwordVisible;
+                                });
+                              },
+                            ),
                           ),
-                          validator: (value) => value != _passwordController.text ? 'Passwords do not match' : null,
+                          validator: (value) {
+                            if (value != _passwordController.text) return 'Passwords do not match';
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 30),
+
+                        // Sign Up Button
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -137,9 +204,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
+
+                        // Already have account
                         TextButton(
                           onPressed: () {
-                            Navigator.pop(context); // يرجع لشاشة تسجيل الدخول
+                            Navigator.pop(context);
                           },
                           child: const Text('Already have an account? Sign In'),
                         ),
@@ -150,7 +219,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
 
-            // ✅ زر تبديل اللون
+            // ✅ Theme toggle button
             Positioned(
               top: 10,
               right: 10,
