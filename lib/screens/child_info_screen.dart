@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../utils/routes.dart';
+import '../utils/validation_utils.dart'; //  استيراد التحقق الموحد
 
 class ChildInfoScreen extends StatefulWidget {
   const ChildInfoScreen({Key? key}) : super(key: key);
@@ -29,25 +30,9 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
     }
   }
 
-  // ✅ التحقق من صحة الاسم
-  bool _isValidName(String? value) {
-    if (value == null || value.isEmpty) return false;
-    final nameRegex = RegExp(r'^[a-zA-Z ]+$');
-    return value.length >= 3 && nameRegex.hasMatch(value);
-  }
-
-  // ✅ التحقق من التاريخ
-  bool _isDateValid(DateTime? date) => date != null && !date.isAfter(DateTime.now());
-
-  // ✅ التحقق من الرقم
-  bool _isNumeric(String? value) {
-    if (value == null || value.isEmpty) return false;
-    return RegExp(r'^[0-9]+$').hasMatch(value);
-  }
-
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      if (!_isDateValid(_birthDate)) {
+      if (!ValidationUtils.isDateValid(_birthDate)) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Please select a valid birth date')),
         );
@@ -98,7 +83,7 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
                 decoration: const InputDecoration(labelText: 'Child Name'),
                 validator: (value) {
                   if (value!.isEmpty) return 'Enter child name';
-                  if (!_isValidName(value)) return 'Name must be at least 3 letters';
+                  if (!ValidationUtils.isValidName(value)) return 'Name must be at least 3 letters';
                   return null;
                 },
               ),
@@ -143,7 +128,8 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
                 decoration: const InputDecoration(labelText: 'Height (cm)'),
                 validator: (value) {
                   if (value!.isEmpty) return 'Enter height';
-                  if (!_isNumeric(value)) return 'Height must be a number';
+                  if (!ValidationUtils.isNumeric(value)) return 'Height must be a number';
+                  if (!ValidationUtils.isPositiveNumeric(value)) return 'Height must be a positive number';
                   return null;
                 },
               ),
@@ -156,7 +142,8 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
                 decoration: const InputDecoration(labelText: 'Weight (kg)'),
                 validator: (value) {
                   if (value!.isEmpty) return 'Enter weight';
-                  if (!_isNumeric(value)) return 'Weight must be a number';
+                  if (!ValidationUtils.isNumeric(value)) return 'Weight must be a number';
+                  if (!ValidationUtils.isPositiveNumeric(value)) return 'Weight must be a positive number';
                   return null;
                 },
               ),
