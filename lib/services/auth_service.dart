@@ -9,10 +9,9 @@ class AuthService with ChangeNotifier {
   bool get isLoggedIn => _isLoggedIn;
   String? get token => _token;
 
-
   final String baseUrl = "http://localhost:3000/api/users";
 
-  /// تسجيل الدخول
+  // تسجيل الدخول
   Future<void> login(String email, String password) async {
     final url = Uri.parse("$baseUrl/login");
 
@@ -26,14 +25,14 @@ class AuthService with ChangeNotifier {
         body: jsonEncode({"email": email, "password": password}),
       );
 
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && responseData['token'] != null) {
         _token = responseData['token'];
         _isLoggedIn = true;
         notifyListeners();
       } else {
-        final error = jsonDecode(response.body)['message'] ?? 'Login failed';
-        throw Exception(error);
+        throw Exception(responseData['message'] ?? 'Login failed');
       }
     } catch (e) {
       print("Login error: $e");
@@ -41,7 +40,7 @@ class AuthService with ChangeNotifier {
     }
   }
 
-  /// إنشاء حساب جديد
+  // تسجيل حساب جديد ثم تسجيل دخول تلقائي
   Future<bool> registerUser({
     required String username,
     required String email,
@@ -66,19 +65,20 @@ class AuthService with ChangeNotifier {
       );
 
       if (response.statusCode == 201) {
-        return true;
+        // بعد نجاح التسجيل، تسجيل الدخول مباشرة
+        await login(email, password);
+        return _isLoggedIn;
       } else {
         final error = jsonDecode(response.body)['message'];
         print("Register error: $error");
         return false;
       }
     } catch (e) {
-      print("Exception: $e");
+      print("Exception during registration: $e");
       return false;
     }
   }
 
-  /// تسجيل الخروج
   void logout() {
     _token = null;
     _isLoggedIn = false;
