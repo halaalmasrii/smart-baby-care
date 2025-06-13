@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
-
 import 'utils/theme_provider.dart';
 import 'utils/routes.dart';
 import 'services/auth_service.dart'; // إدارة الدخول
