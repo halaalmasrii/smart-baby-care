@@ -216,9 +216,10 @@ class _AddEditAppointmentModalState extends State<AddEditAppointmentModal> {
               style: theme.textTheme.titleLarge),
           const SizedBox(height: 16),
           DropdownButtonFormField<AppointmentType>(
-            value: _type,
+            value: _type == AppointmentType.feeding ? AppointmentType.vaccine : _type,
             decoration: const InputDecoration(labelText: 'Appointment Type', border: OutlineInputBorder()),
             items: AppointmentType.values
+                .where((e) => e != AppointmentType.feeding) // حذف خيار Feeding
                 .map((e) => DropdownMenuItem(value: e, child: Text(e.name)))
                 .toList(),
             onChanged: (val) => setState(() => _type = val!),
