@@ -8,13 +8,12 @@ import '../screens/recommendations_screen.dart';
 import '../screens/settings_screen.dart';
 import '../screens/notifications_screen.dart';
 import '../screens/baby_sound_screen.dart';
-import '../screens/schedule_screen.dart';
+import '../screens/schedule_feeding_screen.dart';
 import '../screens/child_info_screen.dart';
 import '../screens/signup_screen.dart';
 import '../screens/sleep_timer_screen.dart';
 import '../screens/status_screen.dart';
 import '../screens/vaccination_schedule_screen.dart';
-
 
 class AppRoutes {
   static const String login = '/';
@@ -33,6 +32,7 @@ class AppRoutes {
   static const String sleepTimer = '/sleep-timer';       
   static const String status = '/status'; 
   static const String vaccines = '/vaccines';
+  static const String schedule = '/schedule';
 
   static final routes = {
     login: (context) => LoginScreen(),
@@ -51,5 +51,6 @@ class AppRoutes {
     sleepTimer: (context) => const SleepTimerScreen(),
     status: (context) => StatusScreen(),
     vaccines: (context) => const VaccinationScheduleScreen(),
+    schedule: (context) => const FeedingScheduleScreen(),
   };
 }
