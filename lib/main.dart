@@ -5,11 +5,11 @@ import 'package:timezone/timezone.dart' as tz;
 
 import 'utils/theme_provider.dart';
 import 'utils/routes.dart';
-import 'services/auth_service.dart'; // ✅ إدارة الدخول
+import 'services/auth_service.dart'; // إدارة الدخول
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  tz.initializeTimeZones(); // ✅ ضروري قبل جدولة الإشعارات
+  tz.initializeTimeZones(); // ضروري قبل جدولة الإشعارات
 
   runApp(
     MultiProvider(
