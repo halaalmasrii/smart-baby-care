@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../utils/routes.dart';
 import '../utils/theme_provider.dart';
 import '../utils/validation_utils.dart';  
+import '../services/auth_service.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -21,11 +22,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String _userType = 'Mother';
   bool _passwordVisible = false;
 
-  void _submit() {
-    if (_formKey.currentState!.validate()) {
+  void _submit() async {
+  if (_formKey.currentState!.validate()) {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final success = await authService.registerUser(
+      username: _nameController.text.trim(),
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+      userType: _userType,
+    );
+
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Account created successfully")),
+      );
       Navigator.pushNamed(context, AppRoutes.childInfo);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to create account")),
+      );
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
