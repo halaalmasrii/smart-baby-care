@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   const SizedBox(height: 40),
 
-                  // ✅ Logo
+                  //  Logo
                   CircleAvatar(
                     radius: 40,
                     backgroundColor: colorScheme.primary,
@@ -51,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // ✅ App name
+                  //  App name
                   Text(
                     'Smart BabyCare',
                     style: theme.textTheme.headlineMedium?.copyWith(
@@ -61,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 40),
 
-                  // ✅ Email field
+                  //  Email field
                   TextField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
@@ -75,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // ✅ Password field with visibility toggle
+                  //  Password field with visibility toggle
                   TextField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
@@ -99,46 +99,57 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 30),
 
-                  // ✅ Login button
+                  //  Login button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () async {
-                        final email = _emailController.text.trim();
-                        final password = _passwordController.text.trim();
+                      final email = _emailController.text.trim();
+                      final password = _passwordController.text.trim();
 
-                        if (email.isEmpty || password.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Please fill in all fields')),
-                          );
-                          return;
-                        }
+                      if (email.isEmpty || password.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Please fill in all fields')),
+                        );
+                        return;
+                      }
 
-                        if (!ValidationUtils.isValidEmail(email)) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Please enter a valid email address')),
-                          );
-                          return;
-                        }
+                      if (!ValidationUtils.isValidEmail(email)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Please enter a valid email address')),
+                        );
+                        return;
+                      }
 
-                        if (!ValidationUtils.isValidPassword(password)) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Password must be at least 8 characters')),
-                          );
-                          return;
-                        }
+                      if (!ValidationUtils.isValidPassword(password)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Password must be at least 6 characters')),
+                        );
+                        return;
+                      }
 
-                        final authService = Provider.of<AuthService>(context, listen: false);
-                        await authService.login(email, password);
+                      final authService = Provider.of<AuthService>(context, listen: false);
 
-                        if (authService.isLoggedIn) {
-                          Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Login failed!')),
-                          );
-                        }
-                      },
+                      // ✅ عرض مؤقت "جاري تسجيل الدخول"
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (_) => const Center(child: CircularProgressIndicator()),
+                      );
+
+                      await authService.login(email, password);
+
+                      Navigator.pop(context); // ⬅️ إغلاق الـ loading
+
+                      if (authService.isLoggedIn) {
+                        Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Login failed! Please check your credentials.')),
+                        );
+                      }
+                    }
+                    ,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colorScheme.primary,
                         padding: const EdgeInsets.symmetric(vertical: 14),
