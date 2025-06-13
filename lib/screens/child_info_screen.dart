@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../utils/routes.dart';
-import '../utils/validation_utils.dart'; //  استيراد التحقق الموحد
+import '../utils/validation_utils.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../services/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class ChildInfoScreen extends StatefulWidget {
   const ChildInfoScreen({Key? key}) : super(key: key);
@@ -30,7 +34,7 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
     }
   }
 
-  void _submit() {
+  void _submit() async {
     if (_formKey.currentState!.validate()) {
       if (!ValidationUtils.isDateValid(_birthDate)) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -39,12 +43,50 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
         return;
       }
 
-      // ✅ هنا يتم حفظ البيانات أو إرسالها إلى الباك
-      Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please complete all fields correctly')),
-      );
+      final authService = Provider.of<AuthService>(context, listen: false);
+      final token = authService.token;
+
+      if (token == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("User not authenticated. Please log in.")),
+        );
+        return;
+      }
+
+      final uri = Uri.parse('http://localhost:3000/api/users/baby');
+
+      final body = {
+        "name": _nameController.text.trim(),
+        "birthDate": _birthDate!.toIso8601String(),
+        "gender": _gender,
+        "height": _heightController.text.trim(),
+        "weight": _weightController.text.trim(),
+      };
+
+      try {
+        final response = await http.post(
+          uri,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token",
+          },
+          body: jsonEncode(body),
+        );
+
+        if (response.statusCode == 201) {
+          Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+        } else {
+          final errorMsg = jsonDecode(response.body)['message'] ?? 'Failed to add baby';
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(errorMsg)),
+          );
+        }
+      } catch (e) {
+        print("Error submitting child info: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
     }
   }
 
@@ -64,7 +106,6 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
           key: _formKey,
           child: ListView(
             children: [
-              // ✅ صورة الطفل
               GestureDetector(
                 onTap: _pickImage,
                 child: CircleAvatar(
@@ -77,7 +118,6 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
               ),
               const SizedBox(height: 16),
 
-              // ✅ الاسم
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(labelText: 'Child Name'),
@@ -89,7 +129,6 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
               ),
               const SizedBox(height: 12),
 
-              // ✅ تاريخ الميلاد
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 title: Text(
@@ -110,7 +149,6 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
               ),
               const SizedBox(height: 12),
 
-              // ✅ الجنس
               DropdownButtonFormField<String>(
                 value: _gender,
                 items: ['Male', 'Female']
@@ -121,7 +159,6 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
               ),
               const SizedBox(height: 12),
 
-              // ✅ الطول
               TextFormField(
                 controller: _heightController,
                 keyboardType: TextInputType.number,
@@ -135,7 +172,6 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
               ),
               const SizedBox(height: 12),
 
-              // ✅ الوزن
               TextFormField(
                 controller: _weightController,
                 keyboardType: TextInputType.number,
@@ -147,10 +183,8 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
                   return null;
                 },
               ),
-
               const SizedBox(height: 24),
 
-              // ✅ زر الحفظ
               ElevatedButton(
                 onPressed: _submit,
                 style: ElevatedButton.styleFrom(
