@@ -1,9 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/routes.dart';
 import '../utils/theme_provider.dart';
-import '../utils/validation_utils.dart';  
+import '../utils/validation_utils.dart';
 import '../services/auth_service.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -22,29 +21,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String _userType = 'Mother';
   bool _passwordVisible = false;
 
+  /// ✅ دالة التسجيل والانتقال لصفحة معلومات الطفل
   void _submit() async {
-  if (_formKey.currentState!.validate()) {
-    final authService = Provider.of<AuthService>(context, listen: false);
-    final success = await authService.registerUser(
-      username: _nameController.text.trim(),
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
-      userType: _userType,
-    );
+    if (_formKey.currentState!.validate()) {
+      final authService = Provider.of<AuthService>(context, listen: false);
 
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Account created successfully")),
+      final success = await authService.registerUser(
+        username: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+        userType: _userType,
       );
-      Navigator.pushNamed(context, AppRoutes.childInfo);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to create account")),
-      );
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Account created successfully")),
+        );
+        Navigator.pushReplacementNamed(context, AppRoutes.childInfo);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Failed to create account")),
+        );
+      }
     }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +82,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     key: _formKey,
                     child: Column(
                       children: [
-                        //  استخدام ValidationUtils
                         TextFormField(
                           controller: _nameController,
                           decoration: const InputDecoration(
