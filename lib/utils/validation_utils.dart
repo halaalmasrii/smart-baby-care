@@ -16,7 +16,7 @@ class ValidationUtils {
 
   //  التحقق من طول الباسورد
   static bool isValidPassword(String? password) {
-    return password != null && password.length >= 8;
+    return password != null && password.length >= 6;
   }
 
   //  التحقق من أن الباسورد والتأكيد متطابقان
