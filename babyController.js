@@ -8,7 +8,6 @@ const Notification = require('../models/notification');
 const Sleep = require('../models/sleep');
 const Vaccine = require('../models/vaccine');
 const Growth = require('../models/growth');
-//const FavoriteList = require("../models/favoriteList");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
@@ -16,17 +15,17 @@ const fs = require("fs");
 
 
 
-const updateChildInfo = async (req, res) => {
-  const userId = req.params.id;
+const updateBabyInfo = async (req, res) => {
+  const babyId = req.params.id;
   const { babyName, babyGender } = req.body;
 
   try {
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    const baby = await Baby.findById(babyId);
+    if (!baby) return res.status(404).json({ message: "baby not found" });
 
-    // افترض أن عندك نموذج Baby مرتبط بالمستخدم
-    const baby = await Baby.findOne({ user: userId });
-    if (!baby) return res.status(404).json({ message: "Baby not found" });
+    // جلب المستخدم من بيانات الطفل مباشرة
+    const user = await User.findById(baby.user);
+    if (!user) return res.status(404).json({ message: "user not found" });
 
     if (babyName) baby.name = babyName;
     if (babyGender) baby.gender = babyGender;
@@ -40,15 +39,21 @@ const updateChildInfo = async (req, res) => {
 
 
 
+
 const createAppointment = async (req, res) => {
-  const { userId } = req.params;
-  const { title, date, time } = req.body;
+  const { title, date, time, babyId } = req.body; // ← من الـ body
+  const userId = req.user._id;
 
   try {
+    // التأكد من أن الطفل يعود للمستخدم
+    const baby = await Baby.findOne({ _id: babyId, user: userId });
+    if (!baby) return res.status(404).json({ message: 'Baby not found' });
+
     const newAppointment = new Appointment({
       title,
       date,
       time,
+      baby: babyId,
       user: userId
     });
 
@@ -58,6 +63,38 @@ const createAppointment = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+const createAppointmentForBaby = async (req, res) => {
+  const {babyId }= req.params;
+  const { title, date, time } = req.body;
+  const userId = req.user?._id;
+
+  try {
+    const baby = await Baby.findOne({ _id: babyId, user: userId });
+    if (!baby) {
+      return res.status(404).json({ message: 'Baby not found' });
+    }
+
+    const newAppointment = new Appointment({
+      title,
+      date,
+      time,
+      babyId,
+      user: userId,
+       
+    });
+
+    await newAppointment.save();
+
+    return res.status(201).json({
+      message: 'Appointment created successfully',
+      appointment: newAppointment
+    });
+  } catch (error) {
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 
 
 
@@ -76,11 +113,17 @@ const getAppointments = async (req, res) => {
 
 const createAnalysis = async (req, res) => {
   const { reason } = req.body;
-  const userId = req.user._id; 
+  const { babyId } = req.params;
+  const userId = req.user?._id;
+
+  if (!reason || !babyId) {
+    return res.status(400).json({ message: 'reason and babyId are required' });
+  }
 
   try {
     const newAnalysis = new CryAnalysis({
       reason,
+      babyId,
       user: userId
     });
 
@@ -90,6 +133,7 @@ const createAnalysis = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 
 const getUserAnalysis = async (req, res) => {
@@ -755,6 +799,7 @@ const getTodayStats = async (req, res) => {
 
 module.exports = {
   getAppointments,
+  createAppointmentForBaby,
   createAppointment,
   createAnalysis,
   getUserAnalysis,
@@ -779,7 +824,7 @@ module.exports = {
   deleteSleepSession, 
   getVaccineReports, 
   getDangerReports,
-  updateChildInfo,
+  updateBabyInfo,
   getGrowthData, 
   getSleepStats, 
   getFeedingStats, 

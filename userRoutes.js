@@ -23,7 +23,6 @@ router.post('/register', [
   body('username').notEmpty(),
   body('email').isEmail().withMessage('Please enter a valid email'),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
-  body('phoneNumber').isMobilePhone(),
   body('userType').isIn(['Mother', 'Father', 'Other']).withMessage('Invalid user type')
 ], userController.createUser);
 
@@ -31,7 +30,6 @@ router.post('/login', userController.loginUser);
 //router.get('/user/:id',isAuth , userController.getUserById);
 router.put('/:id' , isAuth , userController.updateUserProfile);
 router.put('/image/:id', isAuth , userController.updateUserImage);
-router.put('/:id/change-password', isAuth, userController.changePassword);
 router.get('/check-auth', isAuth, userController.checkAuth);
 router.post('/baby', isAuth, upload.single('image'), userController.createBaby);
 router.get('/babies', isAuth, userController.getUserBabies);
@@ -46,3 +44,6 @@ router.get('/sleep', isAuth, userController.getAllSleepSessions);
 router.get('/status/today', isAuth, userController.getTodayStats);
 
 module.exports = router;
+
+
+//16 routes

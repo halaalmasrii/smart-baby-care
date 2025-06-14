@@ -6,7 +6,7 @@ const adminRoutes = require('./adminRoutes');
 
 
 router.use('/users', userRoutes);
-router.use('/babies', userRoutes);
+router.use('/babies', babyRoutes);
 router.use('/admin', adminRoutes);
 
 module.exports = router;

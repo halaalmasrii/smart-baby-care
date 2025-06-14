@@ -14,13 +14,12 @@ const bcrypt = require("bcryptjs");
 const fs = require("fs");
 
 const createUser = async (req, res) => {
-  const { username, email, password, phoneNumber, userType } = req.body;
+  const { username, email, password, userType } = req.body;
 
   if (
     !username ||
     !email ||
-    !password ||
-    !phoneNumber 
+    !password 
     /*
     || !req.files.cv ||
     !req.files.image
@@ -54,7 +53,6 @@ const createUser = async (req, res) => {
       username: username,
       email: email,
       password: hashedPassword,
-      phoneNumber: phoneNumber,
       userType: userType || 'Mother'
       //profileImage: image,
       //cv: cv,
@@ -118,16 +116,18 @@ const getUserById = async (req, res) => {
   const image = await fs.promises.readFile(
     `${process.cwd()}\\${user.profileImage}`
   );
-  /*
+
   const base64Image = Buffer.from(image, "binary").toJSON();
   console.log(base64Image);
+  /*
   const cv = await fs.promises.readFile(`${process.cwd()}\\${user.cv}`);
   const base64Cv = Buffer.from(cv, "binary").toJSON();
+    jsonUser.cv = base64Cv;
+*/
   const jsonUser = user.toJSON();
   delete jsonUser.password;
   jsonUser.profileImage = base64Image;
-  jsonUser.cv = base64Cv;
-  */
+  
   console.log(jsonUser);
   return res.status(200).json(jsonUser);
 };
@@ -137,7 +137,6 @@ const getUserById = async (req, res) => {
 const updateUserProfile = async (req, res) => {
   const userId = req.params.id;
   const username = req.body.username;
-  const phoneNumber = req.body.phoneNumber;
   let user = await User.findById(userId);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
@@ -145,43 +144,12 @@ const updateUserProfile = async (req, res) => {
   if (username) {
     user.username = username;
   }
-  if (phoneNumber) {
-    user.phoneNumber = phoneNumber;
-  }
   user = await user.save();
   return res.status(200).json({
     message: "Profile updated successfully", 
     user,
   });
 };
-
-const changePassword = async (req, res) => {
-  const userId = req.params.id;
-  const { oldPassword, newPassword } = req.body;
-
-  try {
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    // التحقق من كلمة المرور القديمة
-    const isValid = await bcrypt.compare(oldPassword, user.password);
-    if (!isValid) return res.status(400).json({ message: "Invalid password" });
-
-    // تشفير كلمة المرور الجديدة
-    const hashedPassword = await bcrypt.hash(newPassword, 12);
-    user.password = hashedPassword;
-    await user.save();
-
-    return res.status(200).json({
-    message: "Password changed successfully" });
-  } catch (error) {
-    return res.status(500).json({
-    message: error.message });
-  }
-};
-
-
-
 
 
 const checkAuth = async (req, res) => {
@@ -476,6 +444,5 @@ module.exports = {
   scheduleNotification, 
   deleteNotification,
   getAllSleepSessions, 
-  changePassword,  
   getTodayStats,
 };

@@ -19,10 +19,18 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 
+router.get('/test', (req, res) => {
+  res.send('Route is working');
+});
 
-router.get('/:id/appointments', isAuth, babyController.getAppointments);
-router.post('/:id/appointments', isAuth, babyController.createAppointment);
-router.post('/analysis', isAuth, babyController.createAnalysis);
+
+router.put('/info/:babyId', isAuth, babyController.updateBabyInfo);
+router.post('/appointments', isAuth, babyController.createAppointment);
+router.post('/babies/appointments/:babyId', isAuth, babyController.createAppointmentForBaby);
+router.get('/babies/appointments/:babyId', isAuth, babyController.getAppointments);
+router.get('/appointments/:id', isAuth, babyController.getAppointments);
+//router.post('/appointments/:id', isAuth, babyController.createAppointment);
+router.post('/analysis/:babyId', isAuth, babyController.createAnalysis);
 router.get('/analysis', isAuth, babyController.getUserAnalysis);
 router.get('/vaccine', isAuth, babyController.getUserVaccines);
 router.post('/feeding', isAuth, babyController.addFeeding);
@@ -57,3 +65,5 @@ router.put('/vaccines/:id', isAuth, babyController.updateVaccine);
 router.delete('/vaccines/:id', isAuth, babyController.deleteVaccine);
 
 module.exports = router;
+
+//35 routes
