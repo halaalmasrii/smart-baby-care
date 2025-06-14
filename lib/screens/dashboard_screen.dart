@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../widgets/stats_card.dart';
 import '../widgets/custom_nav_bar.dart';
 import '../utils/routes.dart';
 import '../utils/theme_provider.dart';
+import '../services/auth_service.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -14,9 +17,12 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen>
     with SingleTickerProviderStateMixin {
-  final int ageInWeeks = 64;
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
+
+  String babyName = 'Loading...';
+  String babyImage = 'assets/default_baby.png';
+  int ageInWeeks = 0;
 
   @override
   void initState() {
@@ -27,6 +33,40 @@ class _DashboardScreenState extends State<DashboardScreen>
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
     _controller.forward();
+
+    fetchBabyInfo();
+  }
+
+  Future<void> fetchBabyInfo() async {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final token = authService.token;
+
+    final uri = Uri.parse('http://localhost:3000/api/users/baby');
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: {
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body)['baby'];
+        setState(() {
+          babyName = data['name'];
+          final birthDate = DateTime.parse(data['birthDate']);
+          ageInWeeks = DateTime.now().difference(birthDate).inDays ~/ 7;
+          if (data['imageUrl'] != null && data['imageUrl'].toString().isNotEmpty) {
+            babyImage = "http://localhost:3000/${data['imageUrl']}";
+          }
+        });
+      } else {
+        print("Failed to fetch baby info");
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 
   @override
@@ -48,17 +88,19 @@ class _DashboardScreenState extends State<DashboardScreen>
         automaticallyImplyLeading: false,
         title: Row(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 22,
-              backgroundImage: AssetImage('assets/baby.jpg'),
+              backgroundImage: babyImage.startsWith('http')
+                  ? NetworkImage(babyImage)
+                  : AssetImage(babyImage) as ImageProvider,
             ),
             const SizedBox(width: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Baby Layan',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                Text(
+                  babyName,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 Text(
                   '$ageInWeeks weeks old',
@@ -83,16 +125,13 @@ class _DashboardScreenState extends State<DashboardScreen>
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // ✅ StatsCard الجديدة مع Info بدل cry
             StatsCard(
-            sleep: '7 hrs',
-            feeding: '5 times',
-            height: '68 cm',
-            weight: '7.5 kg',
-          ),
+              sleep: '7 hrs',
+              feeding: '5 times',
+              height: '68 cm',
+              weight: '7.5 kg',
+            ),
             const SizedBox(height: 20),
-
-            // ✅ المربعات الثلاثة
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -108,8 +147,6 @@ class _DashboardScreenState extends State<DashboardScreen>
               ],
             ),
             const SizedBox(height: 20),
-
-            // ✅ زر Status
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.pushNamed(context, AppRoutes.status);
