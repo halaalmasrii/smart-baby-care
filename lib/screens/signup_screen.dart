@@ -21,7 +21,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String _userType = 'Mother';
   bool _passwordVisible = false;
 
-  /// ✅ دالة التسجيل والانتقال لصفحة معلومات الطفل
+  ///  دالة التسجيل والانتقال لصفحة معلومات الطفل
   void _submit() async {
     if (_formKey.currentState!.validate()) {
       final authService = Provider.of<AuthService>(context, listen: false);
