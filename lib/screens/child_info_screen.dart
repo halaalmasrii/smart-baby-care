@@ -7,9 +7,12 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../services/auth_service.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart'; // ضروري لـ kIsWeb
 
 class ChildInfoScreen extends StatefulWidget {
-  const ChildInfoScreen({Key? key}) : super(key: key);
+  final VoidCallback? onSuccessCallback; // لإضافة طفل جديد من الإعدادات
+
+  const ChildInfoScreen({Key? key, this.onSuccessCallback}) : super(key: key);
 
   @override
   State<ChildInfoScreen> createState() => _ChildInfoScreenState();
@@ -36,6 +39,14 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
 
   void _submit() async {
     if (_formKey.currentState!.validate()) {
+      // ✅ فحص تاريخ الميلاد
+      if (_birthDate == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select a birth date')),
+        );
+        return;
+      }
+
       if (!ValidationUtils.isDateValid(_birthDate)) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Please select a valid birth date')),
@@ -46,9 +57,10 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
       final authService = Provider.of<AuthService>(context, listen: false);
       final token = authService.token;
 
+      // ✅ فحص وجود التوكن
       if (token == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("User not authenticated. Please log in.")),
+          const SnackBar(content: Text("Please log in again to continue.")),
         );
         return;
       }
@@ -74,7 +86,12 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
         );
 
         if (response.statusCode == 201) {
-          Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+          // ✅ استخدم onSuccessCallback إذا تم توفيرها
+          if (widget.onSuccessCallback != null) {
+            widget.onSuccessCallback!();
+          } else {
+            Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+          }
         } else {
           final errorMsg = jsonDecode(response.body)['message'] ?? 'Failed to add baby';
           ScaffoldMessenger.of(context).showSnackBar(
@@ -106,17 +123,19 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
           key: _formKey,
           child: ListView(
             children: [
-              GestureDetector(
-                onTap: _pickImage,
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
-                  child: _imageFile == null
-                      ? const Icon(Icons.add_a_photo, size: 32)
-                      : null,
+              // ✅ إخفاء الصورة في الويب
+              if (!kIsWeb)
+                GestureDetector(
+                  onTap: _pickImage,
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
+                    child: _imageFile == null
+                        ? const Icon(Icons.add_a_photo, size: 32)
+                        : null,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
+              if (!kIsWeb) const SizedBox(height: 16),
 
               TextFormField(
                 controller: _nameController,
