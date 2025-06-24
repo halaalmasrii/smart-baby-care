@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/custom_app_bar.dart';
+import '../screens/child_info_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -141,6 +142,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  void _addNewChild() {
+    // ✅ تم تعديل هذا الجزء لاستدعاء واجهة الإضافة مع callback
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChildInfoScreen(
+          onSuccessCallback: () {
+            Navigator.pop(context); // يرجع المستخدم للإعدادات بعد الإضافة
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Child added successfully")),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final daysSinceUpdate = lastHeightWeightUpdate == null
@@ -175,6 +193,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: const Text('Edit Child Info'),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () => _editChildInfo(context),
+            ),
+            const Divider(height: 1),
+            // زر إضافة طفل جديد
+            ListTile(
+              leading: const Icon(Icons.add_circle_outline),
+              title: const Text('Add Another Child'),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: _addNewChild,
             ),
           ],
         ),
