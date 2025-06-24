@@ -5,6 +5,7 @@ class StatsCard extends StatelessWidget {
   final String feeding;
   final String height;
   final String weight;
+  final String babyName;
 
   const StatsCard({
     Key? key,
@@ -12,6 +13,7 @@ class StatsCard extends StatelessWidget {
     required this.feeding,
     required this.height,
     required this.weight,
+    required this.babyName,
   }) : super(key: key);
 
   Widget _buildStatItem(IconData icon, String label, String value, Color color) {
@@ -42,10 +44,12 @@ class StatsCard extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            Text(
-              'Today\'s Baby Stats',
-              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-            ),
+            Text("Today's ${babyName.endsWith('s') ? "$babyName'" : "$babyName's"} stats",
+             style:  TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ), ),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
