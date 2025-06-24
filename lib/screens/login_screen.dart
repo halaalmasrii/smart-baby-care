@@ -99,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 30),
 
-                  //  Login button
+                  // Login button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -121,16 +121,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         return;
                       }
 
-                      if (!ValidationUtils.isValidPassword(password)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Password must be at least 6 characters')),
-                        );
-                        return;
-                      }
-
                       final authService = Provider.of<AuthService>(context, listen: false);
 
-                      // ✅ عرض مؤقت "جاري تسجيل الدخول"
+                      // عرض مؤقت "جاري تسجيل الدخول"
                       showDialog(
                         context: context,
                         barrierDismissible: false,
@@ -139,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       await authService.login(email, password);
 
-                      Navigator.pop(context); // ⬅️ إغلاق الـ loading
+                      Navigator.pop(context); // إغلاق الـ loading
 
                       if (authService.isLoggedIn) {
                         Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
@@ -165,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // ✅ Go to signup
+                  // Go to signup
                   TextButton(
                     onPressed: () {
                       Navigator.pushNamed(context, AppRoutes.signup);
@@ -176,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
 
-            // ✅ زر تبديل الثيم
+            // زر تبديل الثيم
             Positioned(
               top: 10,
               right: 10,
