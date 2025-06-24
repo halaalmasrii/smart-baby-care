@@ -20,28 +20,28 @@ class _DashboardScreenState extends State<DashboardScreen>
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
 
-  String babyName = 'Loading...';
-  String babyImage = 'assets/default_baby.png';
-  int ageInWeeks = 0;
+  List<Map<String, dynamic>> babies = [];
+  int selectedBabyIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _controller =
-        AnimationController(duration: const Duration(milliseconds: 500), vsync: this);
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
     _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
     _controller.forward();
 
-    fetchBabyInfo();
+    fetchBabies();
   }
 
-  Future<void> fetchBabyInfo() async {
+  Future<void> fetchBabies() async {
     final authService = Provider.of<AuthService>(context, listen: false);
     final token = authService.token;
-
-    final uri = Uri.parse('http://localhost:3000/api/users/baby');
+    final uri = Uri.parse('http://localhost:3000/api/users/babies'); // عدلي إذا كان مختلف
 
     try {
       final response = await http.get(
@@ -52,17 +52,13 @@ class _DashboardScreenState extends State<DashboardScreen>
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body)['baby'];
+        final data = jsonDecode(response.body);
+        final babyList = List<Map<String, dynamic>>.from(data['babies']);
         setState(() {
-          babyName = data['name'];
-          final birthDate = DateTime.parse(data['birthDate']);
-          ageInWeeks = DateTime.now().difference(birthDate).inDays ~/ 7;
-          if (data['imageUrl'] != null && data['imageUrl'].toString().isNotEmpty) {
-            babyImage = "http://localhost:3000/${data['imageUrl']}";
-          }
+          babies = babyList;
         });
       } else {
-        print("Failed to fetch baby info");
+        print("Failed to fetch babies");
       }
     } catch (e) {
       print("Error: $e");
@@ -81,45 +77,79 @@ class _DashboardScreenState extends State<DashboardScreen>
     final color = theme.colorScheme.primary;
     final themeProvider = Provider.of<ThemeProvider>(context);
 
+    final selectedBaby = babies.isNotEmpty ? babies[selectedBabyIndex] : null;
+    final babyName = selectedBaby?['name'] ?? 'No baby';
+    final babyImage = (selectedBaby?['imageUrl'] ?? '').toString().isNotEmpty
+        ? "http://localhost:3000/${selectedBaby?['imageUrl']}"
+        : 'assets/default_baby.png';
+
+    final birthDate = selectedBaby != null ? DateTime.parse(selectedBaby['birthDate']) : null;
+    final ageInWeeks = birthDate != null ? DateTime.now().difference(birthDate).inDays ~/ 7 : 0;
+
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: color,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: Row(
-          children: [
-            CircleAvatar(
-              radius: 22,
-              backgroundImage: babyImage.startsWith('http')
-                  ? NetworkImage(babyImage)
-                  : AssetImage(babyImage) as ImageProvider,
-            ),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(70), // زيادة ارتفاع AppBar
+          child: AppBar(
+            backgroundColor: color,
+            elevation: 0,
+            automaticallyImplyLeading: false,
+            title: Row(
               children: [
-                Text(
-                  babyName,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                CircleAvatar(
+                  radius: 22,
+                  backgroundImage: babyImage.startsWith('http')
+                      ? NetworkImage(babyImage)
+                      : AssetImage(babyImage) as ImageProvider,
                 ),
-                Text(
-                  '$ageInWeeks weeks old',
-                  style: const TextStyle(fontSize: 12, color: Colors.white70),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // قائمة اختيار الطفل - مع لون خلفية موحّد وخط أبيض
+                    DropdownButton<String>(
+                      value: babyName,
+                      dropdownColor: color, 
+                      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                      iconEnabledColor: Colors.white,
+                      underline: const SizedBox(), // إخفاء الخط تحت الـ dropdown
+                      items: babies.map<DropdownMenuItem<String>>((baby) {
+                        final babyName = baby['name']?.toString() ?? 'Unnamed';
+                        return DropdownMenuItem<String>(
+                          value: babyName,
+                          child: Text(
+                            babyName,
+                            style: const TextStyle(color: Colors.white), // تضمن أن النص أبيض أيضًا
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        final index = babies.indexWhere((b) => b['name'] == value);
+                        if (index != -1) {
+                          setState(() {
+                            selectedBabyIndex = index;
+                          });
+                        }
+                      },
+                    ),
+                    Text(
+                      '$ageInWeeks weeks old',
+                      style: const TextStyle(fontSize: 12, color: Colors.white70),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.color_lens, color: Colors.white),
+                tooltip: "Toggle Theme",
+                onPressed: () {
+                  themeProvider.toggleTheme();
+                },
+              )
+            ],
+          ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.color_lens, color: Colors.white),
-            tooltip: "Toggle Theme",
-            onPressed: () {
-              themeProvider.toggleTheme();
-            },
-          )
-        ],
-      ),
       body: ScaleTransition(
         scale: _scaleAnimation,
         child: ListView(
@@ -128,8 +158,9 @@ class _DashboardScreenState extends State<DashboardScreen>
             StatsCard(
               sleep: '7 hrs',
               feeding: '5 times',
-              height: '68 cm',
-              weight: '7.5 kg',
+              height: selectedBaby?['height']?.toString() ?? '--',
+              weight: selectedBaby?['weight']?.toString() ?? '--',
+              babyName: babyName,
             ),
             const SizedBox(height: 20),
             Row(
