@@ -14,6 +14,7 @@ import '../screens/signup_screen.dart';
 import '../screens/sleep_timer_screen.dart';
 import '../screens/status_screen.dart';
 import '../screens/vaccination_schedule_screen.dart';
+import '../screens/sleep_archive_screen.dart';
 
 class AppRoutes {
   static const String login = '/';
@@ -33,6 +34,7 @@ class AppRoutes {
   static const String status = '/status'; 
   static const String vaccines = '/vaccines';
   static const String schedule = '/schedule';
+  static const String sleepArchive = '/sleep-archive';
 
   static final routes = {
     login: (context) => LoginScreen(),
@@ -52,5 +54,6 @@ class AppRoutes {
     status: (context) => StatusScreen(),
     vaccines: (context) => const VaccinationScheduleScreen(),
     schedule: (context) => const FeedingScheduleScreen(),
+    sleepArchive: (context) => const SleepArchiveScreen(),
   };
 }
