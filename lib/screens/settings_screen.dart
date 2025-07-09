@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/custom_app_bar.dart';
 import '../screens/child_info_screen.dart';
+import '../services/auth_service.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:provider/provider.dart';
+
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -87,9 +92,55 @@ class _SettingsScreenState extends State<SettingsScreen> {
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
           ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("User info updated")));
+            onPressed: () async {
+              final newName = nameController.text.trim();
+              if (newName.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Name cannot be empty")),
+                );
+                return;
+              }
+
+              final token = Provider.of<AuthService>(context, listen: false).token;
+              final userId = Provider.of<AuthService>(context, listen: false).userId;
+
+              if (token == null || userId == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("User not authenticated")),
+                );
+                return;
+              }
+
+              final uri = Uri.parse('http://localhost:3000/api/users/$userId');
+
+              try {
+                final response = await http.put(
+                  uri,
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer $token',
+                  },
+                  body: jsonEncode({'username': newName}),
+                );
+
+                Navigator.pop(context); // إغلاق الديالوج
+
+                if (response.statusCode == 200) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("User info updated successfully")),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Failed: ${jsonDecode(response.body)['message']}")),
+                  );
+                }
+              } catch (e) {
+                Navigator.pop(context);
+                print("Error updating user info: $e");
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Something went wrong")),
+                );
+              }
             },
             child: const Text("Save"),
           )
@@ -143,7 +194,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _addNewChild() {
-    // ✅ تم تعديل هذا الجزء لاستدعاء واجهة الإضافة مع callback
+    // تم تعديل هذا الجزء لاستدعاء واجهة الإضافة مع callback
     Navigator.push(
       context,
       MaterialPageRoute(
