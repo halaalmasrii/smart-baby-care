@@ -9,6 +9,12 @@ class AuthService with ChangeNotifier {
   bool get isLoggedIn => _isLoggedIn;
   String? get token => _token;
 
+  String? _userId;
+  String? get userId => _userId;
+
+  String? selectedBabyId;
+
+
   final String baseUrl = "http://localhost:3000/api/users";
 
   // تسجيل الدخول
@@ -30,6 +36,10 @@ class AuthService with ChangeNotifier {
       if (response.statusCode == 200 && responseData['token'] != null) {
         _token = responseData['token'];
         _isLoggedIn = true;
+
+        // ✅ حفظ userId
+        _userId = responseData['user']['_id'];
+
         notifyListeners();
       } else {
         throw Exception(responseData['message'] ?? 'Login failed');
@@ -81,6 +91,7 @@ class AuthService with ChangeNotifier {
 
   void logout() {
     _token = null;
+    _userId = null;
     _isLoggedIn = false;
     notifyListeners();
   }
