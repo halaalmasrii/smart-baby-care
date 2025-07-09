@@ -16,6 +16,7 @@ const fs = require("fs");
 
 
 const updateBabyInfo = async (req, res) => {
+  const userId = req.user.id;
   const babyId = req.params.id;
   const { babyName, babyGender } = req.body;
 

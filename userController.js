@@ -20,10 +20,7 @@ const createUser = async (req, res) => {
     !username ||
     !email ||
     !password 
-    /*
-    || !req.files.cv ||
-    !req.files.image
-    */
+    
   ) {
     return res
       .status(400)
@@ -37,16 +34,7 @@ const createUser = async (req, res) => {
     if (existUser) {
       return res.status(400).json({ message: "User already exist" });
     }
-    /*
-    let image;
-    let cv;
-    if (req.files) {
-      image = req.files.image[0].path;
-      cv = req.files.cv[0].path;
-    }
-    console.log(image);
-    console.log(cv);
-    */
+    
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const newUser = new User({
@@ -54,12 +42,11 @@ const createUser = async (req, res) => {
       email: email,
       password: hashedPassword,
       userType: userType || 'Mother'
-      //profileImage: image,
-      //cv: cv,
+      
     });
 
     await newUser.save();
-console.log(newUser);
+    console.log(newUser);
     const token = jwt.sign(
       { email: newUser.email },
       process.env.ACCESS_TOKEN_SECRET
@@ -185,9 +172,10 @@ const updateUserImage = async (req, res) => {
 //////
 
 const createBaby = async (req, res) => {
-  const { name, birthDate, gender, height, weight } = req.body;
-  const userId = req.user._id;
-  const imageUrl = req.file ? req.file.path : null;
+
+const userId = req.user.id;
+const { name, birthDate, gender, height, weight } = req.body;
+  //const imageUrl = req.file ? req.file.path : null;
 
   try {
     const newBaby = new Baby({
@@ -196,11 +184,14 @@ const createBaby = async (req, res) => {
       gender,
       height,
       weight,
-      imageUrl,
+      //imageUrl,
       user: userId
     });
 
     await newBaby.save();
+     await User.findByIdAndUpdate(userId, {
+      $push: { babyId: baby._id }
+    });
     return res.status(201).json({ message: 'Baby added successfully', baby: newBaby });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -219,6 +210,7 @@ const getUserBabies = async (req, res) => {
 };
 
 const deleteBaby = async (req, res) => {
+  const userId = req.user.id;
   const babyId = req.params.id;
 
   try {
@@ -236,10 +228,11 @@ const deleteBaby = async (req, res) => {
 };
 
 const getUserBaby = async (req, res) => {
-  const userId = req.user._id;
+  const userId = req.user.id;
+  const babyId = req.params.babyId;
 
   try {
-    const baby = await Baby.findOne({ user: userId });
+    const baby = await Baby.findOne({_id: babyId, user: userId });
     if (!baby) return res.status(404).json({ message: 'Baby not found' });
 
     return res.status(200).json({ baby });
@@ -376,7 +369,7 @@ const getAllSleepSessions = async (req, res) => {
 
 
 const getTodayStats = async (req, res) => {
-  const userId = req.user._id;
+const userId = req.params.id;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -446,3 +439,5 @@ module.exports = {
   getAllSleepSessions, 
   getTodayStats,
 };
+
+
