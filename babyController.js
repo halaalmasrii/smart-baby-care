@@ -16,12 +16,12 @@ const fs = require("fs");
 
 
 const updateBabyInfo = async (req, res) => {
-  const userId = req.user.id;
-  const babyId = req.params.id;
+  const userId = req.user._id;
+  const babyId = req.params.babyId;
   const { babyName, babyGender } = req.body;
 
   try {
-    const baby = await Baby.findById(babyId);
+    const baby = await Baby.findById({ _id: babyId, user: userId });
     if (!baby) return res.status(404).json({ message: "baby not found" });
 
     // جلب المستخدم من بيانات الطفل مباشرة
@@ -42,8 +42,9 @@ const updateBabyInfo = async (req, res) => {
 
 
 const createAppointment = async (req, res) => {
-  const { title, date, time, babyId } = req.body; // ← من الـ body
+  const { title, date, time } = req.body; // ← من الـ body
   const userId = req.user._id;
+  const babyId = req.params.babyId;
 
   try {
     // التأكد من أن الطفل يعود للمستخدم
@@ -66,9 +67,9 @@ const createAppointment = async (req, res) => {
 };
 
 const createAppointmentForBaby = async (req, res) => {
-  const {babyId }= req.params;
-  const { title, date, time } = req.body;
   const userId = req.user?._id;
+  const babyId = req.params.babyId;
+    const { title, date, time } = req.body;
 
   try {
     const baby = await Baby.findOne({ _id: babyId, user: userId });
@@ -80,7 +81,7 @@ const createAppointmentForBaby = async (req, res) => {
       title,
       date,
       time,
-      babyId,
+      baby:babyId,
       user: userId,
        
     });
@@ -100,7 +101,8 @@ const createAppointmentForBaby = async (req, res) => {
 
 
 const getAppointments = async (req, res) => {
-  const { userId } = req.params;
+  const userId = req.user._id;
+  const babyId = req.params.babyId;
 
   try {
     const appointments = await Appointment.find({ user: userId }).sort({ date: -1 });
@@ -114,11 +116,11 @@ const getAppointments = async (req, res) => {
 
 const createAnalysis = async (req, res) => {
   const { reason } = req.body;
-  const { babyId } = req.params;
+  const babyId = req.params.babyId;
   const userId = req.user?._id;
 
   if (!reason || !babyId) {
-    return res.status(400).json({ message: 'reason and babyId are required' });
+    return res.status(400).json({ message: 'reason  are required' });
   }
 
   try {
@@ -139,6 +141,7 @@ const createAnalysis = async (req, res) => {
 
 const getUserAnalysis = async (req, res) => {
   const userId = req.user._id;
+  const babyId = req.params.babyId;
 
   try {
     const analyses = await CryAnalysis.find({ user: userId }).sort({ timestamp: -1 });
@@ -162,8 +165,9 @@ const getUserVaccines = async (req, res) => {
 
 
 const addFeeding = async (req, res) => {
-  const { babyId, amount, unit } = req.body;
+  const { note, amount, unit } = req.body;
   const userId = req.user._id;
+  const babyId = req.params.babyId;
 
   try {
     // التأكد من أن الطفل يعود للمستخدم
@@ -171,7 +175,7 @@ const addFeeding = async (req, res) => {
     if (!baby) return res.status(404).json({ message: 'Baby not found' });
 
     const newFeeding = new Feeding({
-      babyId,
+      baby: babyId,
       amount,
       unit: unit || 'ml',
       note,
@@ -187,6 +191,7 @@ const addFeeding = async (req, res) => {
 
 const getUserFeedings = async (req, res) => {
   const userId = req.user._id;
+  const babyId = req.params.babyId;
 
   try {
     const feedings = await Feeding.find({ babyId: { $in: await Baby.distinct('_id', { user: userId }) } })
@@ -256,6 +261,7 @@ const createDangerAlert = async (req, res) => {
 
 const getUserAlerts = async (req, res) => {
   const userId = req.user._id;
+  const babyId = req.params.babyId;
 
   try {
     const alerts = await DangerAlert.find({
@@ -276,7 +282,7 @@ const getUserAlerts = async (req, res) => {
 
 const getUserNotifications = async (req, res) => {
   const userId = req.user._id;
-
+  const babyId = req.params.babyId;
   try {
     const notifications = await Notification.find({ user: userId })
       .populate('baby', 'name')
@@ -416,7 +422,7 @@ const getFeedingReports = async (req, res) => {
 
 
 const startSleep = async (req, res) => {
-  const { babyId } = req.body;
+  const babyId = req.params.babyId;
   const userId = req.user._id;
 
   try {
@@ -439,7 +445,7 @@ const startSleep = async (req, res) => {
   }
 };
 const endSleep = async (req, res) => {
-  const sleepId = req.params.id;
+  const sleepId = req.params.sleepId;
   const endTime = new Date();
 
   try {
