@@ -15,7 +15,7 @@ class _AddEditAppointmentModalState extends State<AddEditAppointmentModal> {
   late AppointmentType _type;
   late TextEditingController _titleController;
   DateTime? _date;
-  TimeOfDay? _time;
+  List<TimeOfDay> _times = [];
   TimeOfDay? _morningTime;
   TimeOfDay? _eveningTime;
   String? _recurrence;
@@ -31,7 +31,7 @@ class _AddEditAppointmentModalState extends State<AddEditAppointmentModal> {
       _type = appt.type;
       _titleController = TextEditingController(text: appt.title);
       _date = appt.date;
-      _time = appt.time;
+      _times = appt.times;
       _recurrence = appt.recurrence;
       _durationDays = appt.durationDays;
       _notifyOneDayBefore = appt.notifyOneDayBefore;
@@ -56,6 +56,108 @@ class _AddEditAppointmentModalState extends State<AddEditAppointmentModal> {
     final picked = await showTimePicker(context: context, initialTime: TimeOfDay.now());
     if (picked != null) onSelected(picked);
   }
+
+  void _showRecurrenceOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            title: const Text("Once Daily"),
+            onTap: () {
+              setState(() {
+                _recurrence = 'Once Daily';
+                _morningTime = null;
+                _eveningTime = null;
+                _times.clear();
+              });
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: const Text("Morning & Evening"),
+            onTap: () {
+              setState(() {
+                _recurrence = 'Morning & Evening';
+                _times.clear();
+              });
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDurationDialog() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Number of Days"),
+        content: TextField(
+          keyboardType: TextInputType.number,
+          onChanged: (v) => _durationDays = int.tryParse(v),
+          decoration: const InputDecoration(labelText: "Days"),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          )
+        ],
+      ),
+    );
+  }
+
+  void _handleSave() {
+  // شرط التاريخ: مطلوب إلا إذا كان نوع الموعد دواء
+  if (_type != AppointmentType.medicine && _date == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please select a date')),
+    );
+    return;
+  }
+
+  // إعداد قائمة الأوقات حسب النوع
+  List<TimeOfDay> finalTimes = [];
+
+  if (_type == AppointmentType.medicine) {
+    if (_recurrence == 'Morning & Evening') {
+      if (_morningTime != null) finalTimes.add(_morningTime!);
+      if (_eveningTime != null) finalTimes.add(_eveningTime!);
+    } else if (_recurrence == 'Once Daily' && _times.isNotEmpty) {
+      finalTimes = [_times[0]];
+    }
+  } else if (_type == AppointmentType.doctor && _times.isNotEmpty) {
+    finalTimes = [_times[0]];
+  }
+
+  // شرط الوقت: مطلوب فقط للطبيب والدواء
+  if ((_type == AppointmentType.doctor || _type == AppointmentType.medicine) &&
+      finalTimes.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please select at least one time')),
+    );
+    return;
+  }
+
+  // إنشاء الموعد
+  final appt = Appointment(
+    id: widget.appointment?.id,
+    type: _type,
+    title: _titleController.text.trim(),
+    date: _date,
+    times: finalTimes,
+    recurrence: _recurrence,
+    durationDays: _durationDays,
+    notifyAtTime: _notifyAtTime,
+    notifyOneDayBefore: _notifyOneDayBefore,
+  );
+
+  widget.onSave(appt);
+  Navigator.pop(context);
+}
 
   Widget _buildExtraFields() {
     final theme = Theme.of(context);
@@ -87,9 +189,12 @@ class _AddEditAppointmentModalState extends State<AddEditAppointmentModal> {
             style: ElevatedButton.styleFrom(backgroundColor: color, foregroundColor: Colors.white),
           ),
           ElevatedButton.icon(
-            onPressed: () => _pickTime((t) => setState(() => _time = t)),
+            onPressed: () => _pickTime((t) => setState(() {
+              _times.clear();
+              _times.add(t);
+            })),
             icon: const Icon(Icons.access_time),
-            label: Text(_time == null ? 'Select Time' : _time!.format(context)),
+            label: Text(_times.isEmpty ? 'Select Time' : _times[0].format(context)),
             style: ElevatedButton.styleFrom(backgroundColor: color, foregroundColor: Colors.white),
           ),
           CheckboxListTile(
@@ -111,21 +216,24 @@ class _AddEditAppointmentModalState extends State<AddEditAppointmentModal> {
           Row(
             children: [
               ElevatedButton(
-                onPressed: () => _showRecurrenceOptions(),
+                onPressed: _showRecurrenceOptions,
                 child: Text(_recurrence ?? 'Select Frequency'),
               ),
               const SizedBox(width: 10),
               ElevatedButton(
-                onPressed: () => _showDurationDialog(),
+                onPressed: _showDurationDialog,
                 child: Text('${_durationDays ?? '0'} Days'),
               ),
             ],
           ),
           if (_recurrence == 'Once Daily')
             ElevatedButton.icon(
-              onPressed: () => _pickTime((t) => setState(() => _time = t)),
+              onPressed: () => _pickTime((t) => setState(() {
+                _times.clear();
+                _times.add(t);
+              })),
               icon: const Icon(Icons.access_time),
-              label: Text(_time == null ? 'Select Time' : _time!.format(context)),
+              label: Text(_times.isEmpty ? 'Select Time' : _times[0].format(context)),
             ),
           if (_recurrence == 'Morning & Evening') ...[
             ElevatedButton.icon(
@@ -142,66 +250,8 @@ class _AddEditAppointmentModalState extends State<AddEditAppointmentModal> {
         ],
       );
     }
+
     return const SizedBox();
-  }
-
-  void _showRecurrenceOptions() {
-    showModalBottomSheet(
-      context: context,
-      builder: (_) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(title: const Text("Once Daily"), onTap: () {
-            setState(() {
-              _recurrence = 'Once Daily';
-              _morningTime = null;
-              _eveningTime = null;
-            });
-            Navigator.pop(context);
-          }),
-          ListTile(title: const Text("Morning & Evening"), onTap: () {
-            setState(() {
-              _recurrence = 'Morning & Evening';
-              _time = null;
-            });
-            Navigator.pop(context);
-          }),
-        ],
-      ),
-    );
-  }
-
-  void _showDurationDialog() {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Number of Days"),
-        content: TextField(
-          keyboardType: TextInputType.number,
-          onChanged: (v) => _durationDays = int.tryParse(v),
-          decoration: const InputDecoration(labelText: "Days"),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK"))
-        ],
-      ),
-    );
-  }
-
-  void _handleSave() {
-    final appt = Appointment(
-      id: widget.appointment?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
-      type: _type,
-      title: _titleController.text,
-      date: _date,
-      time: _time ?? _morningTime,
-      recurrence: _recurrence,
-      durationDays: _durationDays,
-      notifyAtTime: _notifyAtTime,
-      notifyOneDayBefore: _notifyOneDayBefore,
-    );
-    widget.onSave(appt);
-    Navigator.pop(context);
   }
 
   @override
@@ -209,18 +259,28 @@ class _AddEditAppointmentModalState extends State<AddEditAppointmentModal> {
     final theme = Theme.of(context);
 
     return SingleChildScrollView(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom + 16, left: 16, right: 16, top: 16),
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+        left: 16,
+        right: 16,
+        top: 16,
+      ),
       child: Column(
         children: [
-          Text(widget.appointment == null ? 'Add Appointment' : 'Edit Appointment',
-              style: theme.textTheme.titleLarge),
+          Text(
+            widget.appointment == null ? 'Add Appointment' : 'Edit Appointment',
+            style: theme.textTheme.titleLarge,
+          ),
           const SizedBox(height: 16),
           DropdownButtonFormField<AppointmentType>(
             value: _type == AppointmentType.feeding ? AppointmentType.vaccine : _type,
             decoration: const InputDecoration(labelText: 'Appointment Type', border: OutlineInputBorder()),
             items: AppointmentType.values
-                .where((e) => e != AppointmentType.feeding) // حذف خيار Feeding
-                .map((e) => DropdownMenuItem(value: e, child: Text(e.name)))
+                .where((e) => e != AppointmentType.feeding)
+                .map((e) => DropdownMenuItem(
+                      value: e,
+                      child: Text(e.name),
+                    ))
                 .toList(),
             onChanged: (val) => setState(() => _type = val!),
           ),
