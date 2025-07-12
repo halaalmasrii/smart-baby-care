@@ -23,6 +23,8 @@ class _DashboardScreenState extends State<DashboardScreen>
   List<Map<String, dynamic>> babies = [];
   int selectedBabyIndex = 0;
 
+  String totalSleep = '--'; 
+
   @override
   void initState() {
     super.initState();
@@ -36,12 +38,13 @@ class _DashboardScreenState extends State<DashboardScreen>
     _controller.forward();
 
     fetchBabies();
+    fetchTodayStats(); // استدعاء جلب الإحصائيات
   }
 
   Future<void> fetchBabies() async {
     final authService = Provider.of<AuthService>(context, listen: false);
     final token = authService.token;
-    final uri = Uri.parse('http://localhost:3000/api/users/babies'); // عدلي إذا كان مختلف
+    final uri = Uri.parse('http://localhost:3000/api/users/babies');
 
     try {
       final response = await http.get(
@@ -56,12 +59,46 @@ class _DashboardScreenState extends State<DashboardScreen>
         final babyList = List<Map<String, dynamic>>.from(data['babies']);
         setState(() {
           babies = babyList;
+          selectedBabyIndex = 0;
         });
+        if (babyList.isNotEmpty) {
+        authService.selectedBabyId = babyList[0]['_id'];
+        print(" Baby selected automatically: ${authService.selectedBabyId}");
+      }
       } else {
         print("Failed to fetch babies");
       }
     } catch (e) {
       print("Error: $e");
+    }
+  }
+
+  // تابع جلب عدد ساعات النوم من الباكند
+  Future<void> fetchTodayStats() async {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final token = authService.token;
+
+    final uri = Uri.parse('http://localhost:3000/api/users/status/today');
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: {"Authorization": "Bearer $token"},
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final sleepMinutes = data['sleep']['totalSleep'];
+        final hours = (sleepMinutes / 60).toStringAsFixed(1);
+
+        setState(() {
+          totalSleep = '$hours hrs';
+        });
+      } else {
+        print("Failed to fetch stats");
+      }
+    } catch (e) {
+      print("Error fetching stats: $e");
     }
   }
 
@@ -87,76 +124,79 @@ class _DashboardScreenState extends State<DashboardScreen>
     final ageInWeeks = birthDate != null ? DateTime.now().difference(birthDate).inDays ~/ 7 : 0;
 
     return Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(70), // زيادة ارتفاع AppBar
-          child: AppBar(
-            backgroundColor: color,
-            elevation: 0,
-            automaticallyImplyLeading: false,
-            title: Row(
-              children: [
-                CircleAvatar(
-                  radius: 22,
-                  backgroundImage: babyImage.startsWith('http')
-                      ? NetworkImage(babyImage)
-                      : AssetImage(babyImage) as ImageProvider,
-                ),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // قائمة اختيار الطفل - مع لون خلفية موحّد وخط أبيض
-                    DropdownButton<String>(
-                      value: babyName,
-                      dropdownColor: color, 
-                      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                      iconEnabledColor: Colors.white,
-                      underline: const SizedBox(), // إخفاء الخط تحت الـ dropdown
-                      items: babies.map<DropdownMenuItem<String>>((baby) {
-                        final babyName = baby['name']?.toString() ?? 'Unnamed';
-                        return DropdownMenuItem<String>(
-                          value: babyName,
-                          child: Text(
-                            babyName,
-                            style: const TextStyle(color: Colors.white), // تضمن أن النص أبيض أيضًا
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        final index = babies.indexWhere((b) => b['name'] == value);
-                        if (index != -1) {
-                          setState(() {
-                            selectedBabyIndex = index;
-                          });
-                        }
-                      },
-                    ),
-                    Text(
-                      '$ageInWeeks weeks old',
-                      style: const TextStyle(fontSize: 12, color: Colors.white70),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.color_lens, color: Colors.white),
-                tooltip: "Toggle Theme",
-                onPressed: () {
-                  themeProvider.toggleTheme();
-                },
-              )
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(70),
+        child: AppBar(
+          backgroundColor: color,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          title: Row(
+            children: [
+              CircleAvatar(
+                radius: 22,
+                backgroundImage: babyImage.startsWith('http')
+                    ? NetworkImage(babyImage)
+                    : AssetImage(babyImage) as ImageProvider,
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DropdownButton<String>(
+                    value: babyName,
+                    dropdownColor: color,
+                    style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                    iconEnabledColor: Colors.white,
+                    underline: const SizedBox(),
+                    items: babies.map<DropdownMenuItem<String>>((baby) {
+                      final babyName = baby['name']?.toString() ?? 'Unnamed';
+                      return DropdownMenuItem<String>(
+                        value: babyName,
+                        child: Text(
+                          babyName,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      final index = babies.indexWhere((b) => b['name'] == value);
+                      if (index != -1) {
+                        setState(() {
+                          selectedBabyIndex = index;
+                        });
+                        //  تحديث selectedBabyId عند اختيار طفل جديد
+                        final authService = Provider.of<AuthService>(context, listen: false);
+                        authService.selectedBabyId = babies[index]['_id'];
+                        print(" Switched to baby: ${authService.selectedBabyId}");
+                      }
+                    },
+                  ),
+                  Text(
+                    '$ageInWeeks weeks old',
+                    style: const TextStyle(fontSize: 12, color: Colors.white70),
+                  ),
+                ],
+              ),
             ],
           ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.color_lens, color: Colors.white),
+              tooltip: "Toggle Theme",
+              onPressed: () {
+                themeProvider.toggleTheme();
+              },
+            )
+          ],
         ),
+      ),
       body: ScaleTransition(
         scale: _scaleAnimation,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
             StatsCard(
-              sleep: '7 hrs',
+              sleep: totalSleep, // الربط مع القيمة الديناميكية
               feeding: '5 times',
               height: selectedBaby?['height']?.toString() ?? '--',
               weight: selectedBaby?['weight']?.toString() ?? '--',
