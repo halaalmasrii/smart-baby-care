@@ -7,7 +7,7 @@ import '../screens/data_entry_screen.dart';
 import '../screens/recommendations_screen.dart';
 import '../screens/settings_screen.dart';
 import '../screens/notifications_screen.dart';
-import '../screens/baby_sound_screen.dart';
+import '../screens/baby_cry_screen.dart';
 import '../screens/schedule_feeding_screen.dart';
 import '../screens/child_info_screen.dart';
 import '../screens/signup_screen.dart';

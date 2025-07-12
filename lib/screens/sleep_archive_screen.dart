@@ -24,37 +24,27 @@ class _SleepArchiveScreenState extends State<SleepArchiveScreen> {
   Future<void> fetchArchivedSleepSessions() async {
     final authService = Provider.of<AuthService>(context, listen: false);
     final token = authService.token;
-    final babyId = authService.selectedBabyId;
 
     final uri = Uri.parse('http://localhost:3000/api/users/sleep');
 
     try {
       final response = await http.get(
         uri,
-        headers: {
-          "Authorization": "Bearer $token",
-        },
+        headers: {"Authorization": "Bearer $token"},
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final allSessions = List<Map<String, dynamic>>.from(data['sleepSessions']);
 
-        // استبعاد جلسات اليوم الحالي
-        final today = DateTime.now();
-        today.subtract(Duration(
-          hours: today.hour,
-          minutes: today.minute,
-          seconds: today.second,
-          milliseconds: today.millisecond,
-        ));
+        final now = DateTime.now();
+        final today = DateTime(now.year, now.month, now.day);
 
         setState(() {
           archivedSessions = allSessions.where((session) {
             final start = DateTime.parse(session['startTime']);
-            return start.day != today.day ||
-                start.month != today.month ||
-                start.year != today.year;
+            final sessionDate = DateTime(start.year, start.month, start.day);
+            return sessionDate.isBefore(today); // فقط الجلسات القديمة
           }).toList();
           isLoading = false;
         });
@@ -73,6 +63,11 @@ class _SleepArchiveScreenState extends State<SleepArchiveScreen> {
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   }
 
+  String _formatDate(String timestamp) {
+    final time = DateTime.parse(timestamp);
+    return '${time.day}/${time.month}/${time.year}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,13 +80,24 @@ class _SleepArchiveScreenState extends State<SleepArchiveScreen> {
                   itemCount: archivedSessions.length,
                   itemBuilder: (context, index) {
                     final session = archivedSessions[index];
+                    final start = session['startTime'];
+                    final end = session['endTime'];
+                    final duration = session['duration'];
+                    final notes = session['notes'];
+
                     return ListTile(
                       leading: const Icon(Icons.nightlight_round),
                       title: Text(
-                        '${_formatTime(session['startTime'])} - ${_formatTime(session['endTime'])}',
+                        '${_formatTime(start)} - ${_formatTime(end)} (${_formatDate(start)})',
                       ),
-                      subtitle: Text(
-                          'Duration: ${((session['duration'] ?? 0) / 60).toStringAsFixed(1)} hrs'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Duration: ${(duration / 60).toStringAsFixed(1)} hrs'),
+                          if (notes != null && notes.toString().isNotEmpty)
+                            Text('Notes: $notes'),
+                        ],
+                      ),
                     );
                   },
                 ),

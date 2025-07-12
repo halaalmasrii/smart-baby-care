@@ -12,10 +12,17 @@ class AuthService with ChangeNotifier {
   String? _userId;
   String? get userId => _userId;
 
-  String? selectedBabyId;
-
+  String? selectedBabyId; // ← تُستخدم لربط الموعد بالطفل المناسب
 
   final String baseUrl = "http://localhost:3000/api/users";
+
+  // Getter يستخدم بسهولة في الربط بالباك
+  Map<String, String> get authHeaders {
+    return {
+      "Authorization": "Bearer $_token",
+      "Content-Type": "application/json",
+    };
+  }
 
   // تسجيل الدخول
   Future<void> login(String email, String password) async {
@@ -36,10 +43,7 @@ class AuthService with ChangeNotifier {
       if (response.statusCode == 200 && responseData['token'] != null) {
         _token = responseData['token'];
         _isLoggedIn = true;
-
-        // ✅ حفظ userId
         _userId = responseData['user']['_id'];
-
         notifyListeners();
       } else {
         throw Exception(responseData['message'] ?? 'Login failed');
@@ -75,7 +79,6 @@ class AuthService with ChangeNotifier {
       );
 
       if (response.statusCode == 201) {
-        // بعد نجاح التسجيل، تسجيل الدخول مباشرة
         await login(email, password);
         return _isLoggedIn;
       } else {
@@ -92,6 +95,7 @@ class AuthService with ChangeNotifier {
   void logout() {
     _token = null;
     _userId = null;
+    selectedBabyId = null;
     _isLoggedIn = false;
     notifyListeners();
   }
