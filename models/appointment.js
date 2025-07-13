@@ -1,28 +1,46 @@
 const mongoose = require('mongoose');
 
 const appointmentSchema = new mongoose.Schema({
-  type: {
-    type: String,
-    required: true
-  },
-
   title: {
     type: String,
     required: true
   },
-  date: {
-    type: Date,
+  type: {
+    type: String, // 'vaccine', 'doctor', 'medicine'
     required: true
   },
-  time: {
-    type: String,
+  date: {
+    type: Date,
+    required: false
   },
+times: {
+  type: [String], // مثل ["09:00", "21:00"]
+  default: []
+},
   repeat: {
-    type: String,
+    type: String, // قيم محتملة: null, 'daily', 'weekly', 'monthly', إلخ
+    default: null
+  },
+  durationDays: {
+    type: Number, // عدد الأيام للمواعيد المتكررة أو العلاجات
+    default: null
+  },
+  notifyAtTime: {
+    type: Boolean,
+    default: false
+  },
+  notifyOneDayBefore: {
+    type: Boolean,
+    default: false
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+    required: true
+  },
+  babyId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Baby',
     required: true
   }
 });

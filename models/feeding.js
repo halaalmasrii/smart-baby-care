@@ -6,23 +6,32 @@ const feedingSchema = new mongoose.Schema({
     ref: 'Baby',
     required: true
   },
-  amount: {
-    type: Number,
-    required: true
-  },
-  unit: {
+  title: {
     type: String,
-    enum: ['ml', 'oz'],
-    default: 'ml'
+    default: "Feeding Reminder"
   },
   time: {
     type: Date,
     default: Date.now
   },
-  note: {
+  recurrence: {
     type: String,
-    default: ''
+    default: 'every_3_hours'
+  },
+  notifyAtTime: {
+    type: Boolean,
+    default: true
+  },
+  lastFeeding: {
+    type: Date,
+    default: null
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   }
 });
 
-module.exports = mongoose.model('Feeding', feedingSchema);
+const Feeding = mongoose.model('Feeding', feedingSchema);
+module.exports = Feeding;

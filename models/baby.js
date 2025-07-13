@@ -1,11 +1,10 @@
 const mongoose = require('mongoose');
 
 const babySchema = new mongoose.Schema({
-   babyId: {
-     type: mongoose.Schema.Types.ObjectId,
-      ref: 'Baby',
-      required: true
-    },
+  //  babyId: {
+  //    type: mongoose.Schema.Types.ObjectId,
+  //     required: true
+  //   },
   name: {
     type: String,
     required: true

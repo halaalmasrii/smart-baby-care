@@ -18,16 +18,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  phoneNumber: {
-    type: String,
-    required: true,
-  },/*
+
   profileImage: {
     type: String,
   },
-  cv: {
-    type: String,
-  },*/
+
   isBlocked: {
     type: Boolean,
     default: false,
@@ -36,7 +31,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["user", "admin"],
     default: "user",
-  }/*,
+  },
+  babyId:[{
+       type: mongoose.Schema.Types.ObjectId,
+        ref: 'Baby',
+      }],/*,
   similarityFactor: {
     type: [Number],
     default: [],

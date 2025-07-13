@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const sleepSchema = new mongoose.Schema({
-  baby: {
+  babyId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Baby',
     required: true
@@ -12,15 +12,24 @@ const sleepSchema = new mongoose.Schema({
   },
   endTime: {
     type: Date,
-    required: true
+    required: false // بينضاف عند إنهاء النوم
   },
   duration: {
-    type: Number, // مدة النوم بالدقائق
-    required: true
+    type: Number, // بالدقائق
+    required: false
   },
   notes: {
     type: String,
     default: ''
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  isSleeping: {
+    type: Boolean,
+    default: true // أول ما يبدأ النوم بيكون نايم
   }
 });
 
