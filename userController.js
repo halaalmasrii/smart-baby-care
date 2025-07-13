@@ -67,23 +67,30 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email: email });
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
+
     const isEqual = await bcrypt.compare(password, user.password);
     if (!isEqual) {
       return res.status(400).json({ message: "Invalid password" });
     }
+
+    // ✅ تأكدنا أنه في JWT_SECRET ومو معرف مسبقاً متغير تاني اسمه token
     const token = jwt.sign(
-      { email: user.email },
-      process.env.ACCESS_TOKEN_SECRET
+      { id: user._id, email: user.email },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "1d" }
     );
 
-    res.cookie('token', token, { httpOnly: true, secure: false }); // secure: true في الإنتاج
-
-    return res.status(200).json({ message: "Login successful", user, token });
+    res.cookie("token", token, { httpOnly: true, secure: false }); // secure:true للإنتاج
+    return res.status(200).json({
+      message: "Login successful",
+      user,
+      token,
+    });
   } catch (error) {
     return res
       .status(500)
@@ -122,21 +129,25 @@ const getUserById = async (req, res) => {
 ////////
 
 const updateUserProfile = async (req, res) => {
-  const userId = req.params.id;
+  const userId = req.user._id; // تعديل: أخذنا الـ user من التوكن
   const username = req.body.username;
+
   let user = await User.findById(userId);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
+
   if (username) {
     user.username = username;
   }
+
   user = await user.save();
   return res.status(200).json({
-    message: "Profile updated successfully", 
+    message: "Profile updated successfully",
     user,
   });
 };
+
 
 
 const checkAuth = async (req, res) => {
@@ -153,13 +164,16 @@ const checkAuth = async (req, res) => {
 
 const updateUserImage = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.user._id; // تعديل: أخذنا الـ user من التوكن
     const profileImagePath = req.files.image[0].path;
+
     const user = await User.findById(userId);
     console.log(user);
+
     fs.unlink(`${process.cwd()}\\${user.profileImage}`, (err) => {
       console.log(err);
     });
+
     user.profileImage = profileImagePath;
     await user.save();
 
@@ -168,6 +182,7 @@ const updateUserImage = async (req, res) => {
     return res.status(400).json({ error: err.message });
   }
 };
+
 
 //////
 
@@ -190,8 +205,7 @@ const { name, birthDate, gender, height, weight } = req.body;
 
     await newBaby.save();
      await User.findByIdAndUpdate(userId, {
-      $push: { babyId: baby._id }
-    });
+     $push: { babyId: newBaby._id }  });
     return res.status(201).json({ message: 'Baby added successfully', baby: newBaby });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -369,55 +383,68 @@ const getAllSleepSessions = async (req, res) => {
 
 
 const getTodayStats = async (req, res) => {
-const userId = req.params.id;
+  const userId = req.user._id;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   try {
     const babies = await Baby.find({ user: userId });
-    const babyIds = babies.map(baby => baby._id);
-    
-    // إحصائيات النوم
-    const sleepData = await Sleep.find({ 
-      baby: { $in: babyIds },
-      startTime: { $gte: today }
-    });
-    
-    const totalSleep = sleepData.reduce((sum, session) => sum + (session.duration || 0), 0);
-     // إحصائيات التغذية
-    const feedingData = await Feeding.find({ 
-      baby: { $in: babyIds },
-      time: { $gte: today }
-    });
-    
-    const totalFeedings = feedingData.length;
-    const totalAmount = feedingData.reduce((sum, feed) => sum + feed.amount, 0);
-    
-    // إحصائيات البكاء
-    const cryingData = await CryAnalysis.find({ 
-      baby: { $in: babyIds },
-      timestamp: { $gte: today }
-    });
-    
-    const cryingCount = cryingData.length;
-       
-    return res.status(200).json({ 
-      sleep: {
-        totalSleep: totalSleep,
-        sessions: sleepData.length
-      },
-      feeding: {
-        totalFeedings: totalFeedings,
-        totalAmount: totalAmount
-      },
-      crying: {
-        cryingCount: cryingCount
-      }
-    });
+
+    const statsPerBaby = [];
+
+    for (const baby of babies) {
+      const babyId = baby._id;
+
+      // النوم
+      const sleepData = await Sleep.find({
+        baby: babyId,
+        startTime: { $gte: today }
+      });
+
+      const totalSleep = sleepData.reduce((sum, session) => sum + (session.duration || 0), 0);
+
+      // التغذية
+      const feedingData = await Feeding.find({
+        baby: babyId,
+        time: { $gte: today }
+      });
+
+      const totalFeedings = feedingData.length;
+      const totalAmount = feedingData.reduce((sum, feed) => sum + feed.amount, 0);
+
+      // البكاء
+      const cryingData = await CryAnalysis.find({
+        baby: babyId,
+        timestamp: { $gte: today }
+      });
+
+      const cryingCount = cryingData.length;
+
+      // ضفنا النتائج لهالطفل
+      statsPerBaby.push({
+        babyId,
+        babyName: baby.name,
+        sleep: {
+          totalSleep,
+          sessions: sleepData.length
+        },
+        feeding: {
+          totalFeedings,
+          totalAmount
+        },
+        crying: {
+          cryingCount
+        }
+      });
+    }
+
+    return res.status(200).json({ stats: statsPerBaby });
+
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 
 module.exports = {
@@ -439,5 +466,7 @@ module.exports = {
   getAllSleepSessions, 
   getTodayStats,
 };
+
+//17-10
 
 
