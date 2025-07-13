@@ -1,0 +1,3798 @@
+{
+	"info": {
+		"_postman_id": "e494e16c-4523-4349-9b56-f647b1c2f778",
+		"name": "smart-baby-care",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41519212"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "notification",
+					"item": [
+						{
+							"name": "createNotification",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbXkzQGdtYWlsLmNvbSIsImlhdCI6MTc0OTc3MDI2Nn0.gOnkOHOrHyi_lc_P4ztglxgihFAv-9mYyDiKm8kUKCM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/users/notifications",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"notifications"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getNotification",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbXkzQGdtYWlsLmNvbSIsImlhdCI6MTc0OTc3MDI2Nn0.gOnkOHOrHyi_lc_P4ztglxgihFAv-9mYyDiKm8kUKCM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/users/notifications",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"notifications"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "getNotification",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "localhost:3000/api/users/notifications",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"users",
+												"notifications"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "20"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"14-rGnko0plFblBZ6cCxL9htMA8NKo\""
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 13 Jun 2025 00:04:51 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"notifications\": []\n}"
+								}
+							]
+						},
+						{
+							"name": "markAsRead",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbXkzQGdtYWlsLmNvbSIsImlhdCI6MTc0OTc3MDI2Nn0.gOnkOHOrHyi_lc_P4ztglxgihFAv-9mYyDiKm8kUKCM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/users/notifications/:id/read",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"notifications",
+										":id",
+										"read"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "markAsRead",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "localhost:3000/api/users/notifications",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"users",
+												"notifications"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "20"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"14-rGnko0plFblBZ6cCxL9htMA8NKo\""
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 13 Jun 2025 00:04:51 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"notifications\": []\n}"
+								}
+							]
+						},
+						{
+							"name": "scheduleNotification",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbXkzQGdtYWlsLmNvbSIsImlhdCI6MTc0OTc3MDI2Nn0.gOnkOHOrHyi_lc_P4ztglxgihFAv-9mYyDiKm8kUKCM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/users/notifications/schedule",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"notifications",
+										"schedule"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "scheduleNotification",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "localhost:3000/api/users/notifications",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"users",
+												"notifications"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "20"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"14-rGnko0plFblBZ6cCxL9htMA8NKo\""
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 13 Jun 2025 00:04:51 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"notifications\": []\n}"
+								}
+							]
+						},
+						{
+							"name": "deleteNotification",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbXkzQGdtYWlsLmNvbSIsImlhdCI6MTc0OTc3MDI2Nn0.gOnkOHOrHyi_lc_P4ztglxgihFAv-9mYyDiKm8kUKCM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/users/notifications/:id",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"notifications",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "deleteNotification",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "localhost:3000/api/users/notifications",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"users",
+												"notifications"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "20"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"14-rGnko0plFblBZ6cCxL9htMA8NKo\""
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 13 Jun 2025 00:04:51 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"notifications\": []\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "baby",
+					"item": [
+						{
+							"name": "createBaby",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmY5YzE1NGJjY2Y0NDIyZWMxNGZlMSIsImVtYWlsIjoibW9teTZAZ21haWwuY29tIiwiaWF0IjoxNzUyMTU5MTYwLCJleHAiOjE3NTIyNDU1NjB9.VHokwYg_aiVkm3l8q23qtZEl1FpxkryTSUAWp7_Kz6E",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"name\":\"loli7\",\r\n      \"birthDate\":\"12/12/2024\",\r\n      \"gender\":\"Male\",\r\n      \"height\":70,\r\n      \"weight\":7\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:3000/api/users/baby",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"baby"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "createBaby",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n   \"name\":\"loli3\",\r\n      \"birthDate\":\"12/12/2024\",\r\n      \"gender\":\"Male\",\r\n      \"height\":70,\r\n      \"weight\":7\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:3000/api/users/baby",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"users",
+												"baby"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "230"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"e6-NKqiFzEoglPkYc2zdADjbMyi5/E\""
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 13 Jun 2025 00:06:57 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Baby added successfully\",\n    \"baby\": {\n        \"name\": \"loli3\",\n        \"birthDate\": \"2024-12-11T21:00:00.000Z\",\n        \"gender\": \"Male\",\n        \"height\": 70,\n        \"weight\": 7,\n        \"imageUrl\": null,\n        \"user\": \"684b5fdf847095aa92e731f3\",\n        \"_id\": \"684b6ba1d07cb08b7c3616e5\",\n        \"__v\": 0\n    }\n}"
+								},
+								{
+									"name": "createBaby",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n   \"name\":\"loli3\",\r\n      \"birthDate\":\"12/12/2024\",\r\n      \"gender\":\"Male\",\r\n      \"height\":70,\r\n      \"weight\":7\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:3000/api/users/baby",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"users",
+												"baby"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "230"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"e6-NKqiFzEoglPkYc2zdADjbMyi5/E\""
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 13 Jun 2025 00:06:57 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Baby added successfully\",\n    \"baby\": {\n        \"name\": \"loli3\",\n        \"birthDate\": \"2024-12-11T21:00:00.000Z\",\n        \"gender\": \"Male\",\n        \"height\": 70,\n        \"weight\": 7,\n        \"imageUrl\": null,\n        \"user\": \"684b5fdf847095aa92e731f3\",\n        \"_id\": \"684b6ba1d07cb08b7c3616e5\",\n        \"__v\": 0\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "deleteBaby",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbXkzQGdtYWlsLmNvbSIsImlhdCI6MTc0OTc3MDI2Nn0.gOnkOHOrHyi_lc_P4ztglxgihFAv-9mYyDiKm8kUKCM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/users/baby/684b6ba1d07cb08b7c3616e5",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"baby",
+										"684b6ba1d07cb08b7c3616e5"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "deleteBaby",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "localhost:3000/api/users/baby/684b6ba1d07cb08b7c3616e5",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"users",
+												"baby",
+												"684b6ba1d07cb08b7c3616e5"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "39"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"27-r66lvCt+zQW+zaGqusOdpCbO3GQ\""
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 13 Jun 2025 00:07:33 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Baby deleted successfully\"\n}"
+								}
+							]
+						},
+						{
+							"name": "getUserBaby",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbXkzQGdtYWlsLmNvbSIsImlhdCI6MTc0OTc3MDI2Nn0.gOnkOHOrHyi_lc_P4ztglxgihFAv-9mYyDiKm8kUKCM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/users/baby",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"baby"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "getUserBaby",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "localhost:3000/api/users/baby",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"users",
+												"baby"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "193"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"c1-3pCxm11GpAS+j36ygvtbCGim6Cg\""
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 13 Jun 2025 00:06:28 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"baby\": {\n        \"_id\": \"684b6711fbc4b2845f95b555\",\n        \"name\": \"loli\",\n        \"birthDate\": \"2024-12-11T21:00:00.000Z\",\n        \"gender\": \"Male\",\n        \"height\": 70,\n        \"weight\": 7,\n        \"imageUrl\": null,\n        \"user\": \"684b5fdf847095aa92e731f3\",\n        \"__v\": 0\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "getUserBabies",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbXkzQGdtYWlsLmNvbSIsImlhdCI6MTc0OTc3MDI2Nn0.gOnkOHOrHyi_lc_P4ztglxgihFAv-9mYyDiKm8kUKCM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/users/babies",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"babies"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "getUserBabies",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "localhost:3000/api/users/babies",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"users",
+												"babies"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "197"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"c5-39V/lC+67VVcBbwcH8i0AcTfLDY\""
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 13 Jun 2025 00:00:48 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"babies\": [\n        {\n            \"_id\": \"684b6711fbc4b2845f95b555\",\n            \"name\": \"loli\",\n            \"birthDate\": \"2024-12-11T21:00:00.000Z\",\n            \"gender\": \"Male\",\n            \"height\": 70,\n            \"weight\": 7,\n            \"imageUrl\": null,\n            \"user\": \"684b5fdf847095aa92e731f3\",\n            \"__v\": 0\n        }\n    ]\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\":\"momy6@gmail.com\",\r\n  \"password\": \"000000\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/users/login",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"momy5\",\r\n  \"email\": \"momy5@gmail.com\",\r\n  \"password\": \"000000\",\r\n  \"phoneNumber\": \"00000\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/users/register",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateProfile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbXkzQGdtYWlsLmNvbSIsImlhdCI6MTc0OTc3MDI2Nn0.gOnkOHOrHyi_lc_P4ztglxgihFAv-9mYyDiKm8kUKCM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\":\"hala4\",\r\n  \"phoneNumber\":\"4444\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/users/684b5fdf847095aa92e731f3",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"684b5fdf847095aa92e731f3"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "UpdateProfile",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\":\"hala4\",\r\n  \"phoneNumber\":\"4444\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:3000/api/users/684b5fdf847095aa92e731f3",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"684b5fdf847095aa92e731f3"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "http://localhost:3001"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "322"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"142-mY8hh/It1TAoJVfwQZKk6pnDCfc\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 11 Jul 2025 00:51:21 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Profile updated successfully\",\n    \"user\": {\n        \"_id\": \"684b5fdf847095aa92e731f3\",\n        \"username\": \"hala4\",\n        \"userType\": \"Mother\",\n        \"email\": \"momy3@gmail.com\",\n        \"password\": \"$2b$12$mAmknycr3A3hG30DXybb6.cyHbpn1iZAAJZrnWx2FcKlT8OxMG8Ua\",\n        \"phoneNumber\": \"3333\",\n        \"isBlocked\": false,\n        \"role\": \"user\",\n        \"__v\": 1,\n        \"babyId\": [\n            \"686fb42a2476c4041ea9ef70\"\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "updateUserImage",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbXkzQGdtYWlsLmNvbSIsImlhdCI6MTc0OTc3MDI2Nn0.gOnkOHOrHyi_lc_P4ztglxgihFAv-9mYyDiKm8kUKCM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "",
+									"type": "file",
+									"src": "postman-cloud:///1f047e4b-4e04-4e80-9d98-dee8620ed73c"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/api/users/image/684b5fdf847095aa92e731f3",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"image",
+								"684b5fdf847095aa92e731f3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllSleepSessions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbXkzQGdtYWlsLmNvbSIsImlhdCI6MTc0OTc3MDI2Nn0.gOnkOHOrHyi_lc_P4ztglxgihFAv-9mYyDiKm8kUKCM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/users/sleep",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"sleep"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "getAllSleepSessions",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/users/sleep",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"sleep"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "http://localhost:3001"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "20"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"14-bOLR7gLpnXoyREx5/KMg0PFp21A\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 13 Jun 2025 00:17:06 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"sleepSessions\": []\n}"
+						}
+					]
+				},
+				{
+					"name": "getTodayStats",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbXkzQGdtYWlsLmNvbSIsImlhdCI6MTc0OTc3MDI2Nn0.gOnkOHOrHyi_lc_P4ztglxgihFAv-9mYyDiKm8kUKCM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/users/status/today",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"status",
+								"today"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "getTodayStats",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/users/status/today",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"status",
+										"today"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "http://localhost:3001"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "515"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"203-TP04P1Fwhah+b5DaOW/YwvqcAFY\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 11 Jul 2025 00:53:59 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"stats\": [\n        {\n            \"babyId\": \"686fca192476c4041ea9ef7b\",\n            \"babyName\": \"loli6\",\n            \"sleep\": {\n                \"totalSleep\": 0,\n                \"sessions\": 0\n            },\n            \"feeding\": {\n                \"totalFeedings\": 0,\n                \"totalAmount\": 0\n            },\n            \"crying\": {\n                \"cryingCount\": 0\n            }\n        },\n        {\n            \"babyId\": \"686fd404bba6fc397c2e6e87\",\n            \"babyName\": \"loli7\",\n            \"sleep\": {\n                \"totalSleep\": 0,\n                \"sessions\": 0\n            },\n            \"feeding\": {\n                \"totalFeedings\": 0,\n                \"totalAmount\": 0\n            },\n            \"crying\": {\n                \"cryingCount\": 0\n            }\n        },\n        {\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"babyName\": \"loli7\",\n            \"sleep\": {\n                \"totalSleep\": 0,\n                \"sessions\": 0\n            },\n            \"feeding\": {\n                \"totalFeedings\": 0,\n                \"totalAmount\": 0\n            },\n            \"crying\": {\n                \"cryingCount\": 0\n            }\n        }\n    ]\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Baby",
+			"item": [
+				{
+					"name": "appointments",
+					"item": [
+						{
+							"name": "createAppointment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmY5YzE1NGJjY2Y0NDIyZWMxNGZlMSIsImVtYWlsIjoibW9teTZAZ21haWwuY29tIiwiaWF0IjoxNzUyMTg1NDU4LCJleHAiOjE3NTIyNzE4NTh9.KQPrCcpsquCDBf4l0nXL4zVe_4NlQm-CjVtAiAU_o2U",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"title\": \"Antibiotics\",\r\n  \"type\": \"vaccine2\",\r\n  \"date\": \"2025-07-15\",\r\n  \"time\": \"09:00\",\r\n  \"repeat\": \"daily\",\r\n  \"durationDays\": 5,\r\n  \"notifyOneDayBefore\": true,\r\n  \"notifyAtTime\": true\r\n}\r\n\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:3000/api/babies/babies/appointments/686fca192476c4041ea9ef7b",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"babies",
+										"babies",
+										"appointments",
+										"686fca192476c4041ea9ef7b"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "createAppointment",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"title\": \"Antibiotics\",\r\n  \"type\": \"medicine\",\r\n  \"date\": \"2025-07-15\",\r\n  \"time\": \"09:00\",\r\n  \"repeat\": \"daily\",\r\n  \"durationDays\": 5,\r\n  \"notifyOneDayBefore\": true,\r\n  \"notifyAtTime\": true\r\n}\r\n\r\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:3000/api/babies/babies/appointments/686fca192476c4041ea9ef7b",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"babies",
+												"babies",
+												"appointments",
+												"686fca192476c4041ea9ef7b"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "342"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"156-yPXDiaQ+fkt743ZYxF85BJOk+ZI\""
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 10 Jul 2025 22:53:02 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Appointment created successfully\",\n    \"appointment\": {\n        \"title\": \"Antibiotics\",\n        \"type\": \"medicine\",\n        \"date\": \"2025-07-15T00:00:00.000Z\",\n        \"time\": \"09:00\",\n        \"notifyAtTime\": true,\n        \"notifyOneDayBefore\": true,\n        \"durationDays\": 5,\n        \"repeat\": \"daily\",\n        \"user\": \"686f9c154bccf4422ec14fe1\",\n        \"babyId\": \"686fca192476c4041ea9ef7b\",\n        \"_id\": \"6870444edf63453b9b281d2d\",\n        \"__v\": 0\n    }\n}"
+								},
+								{
+									"name": "createAppointment",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"title\": \"Antibiotics\",\r\n  \"type\": \"doctor\",\r\n  \"date\": \"2025-07-15\",\r\n  \"time\": \"09:00\",\r\n  \"repeat\": \"daily\",\r\n  \"durationDays\": 5,\r\n  \"notifyOneDayBefore\": true,\r\n  \"notifyAtTime\": true\r\n}\r\n\r\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:3000/api/babies/babies/appointments/686fca192476c4041ea9ef7b",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"babies",
+												"babies",
+												"appointments",
+												"686fca192476c4041ea9ef7b"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "340"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"154-7VIYoIfKWrGr+wtDLaQjNFX55/k\""
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 10 Jul 2025 22:56:02 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Appointment created successfully\",\n    \"appointment\": {\n        \"title\": \"Antibiotics\",\n        \"type\": \"doctor\",\n        \"date\": \"2025-07-15T00:00:00.000Z\",\n        \"time\": \"09:00\",\n        \"notifyAtTime\": true,\n        \"notifyOneDayBefore\": true,\n        \"durationDays\": 5,\n        \"repeat\": \"daily\",\n        \"user\": \"686f9c154bccf4422ec14fe1\",\n        \"babyId\": \"686fca192476c4041ea9ef7b\",\n        \"_id\": \"68704502df63453b9b281d31\",\n        \"__v\": 0\n    }\n}"
+								},
+								{
+									"name": "createAppointment",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"title\": \"Antibiotics\",\r\n  \"type\": \"vaccine\",\r\n  \"date\": \"2025-07-15\",\r\n  \"time\": \"09:00\",\r\n  \"repeat\": \"daily\",\r\n  \"durationDays\": 5,\r\n  \"notifyOneDayBefore\": true,\r\n  \"notifyAtTime\": true\r\n}\r\n\r\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:3000/api/babies/babies/appointments/686fca192476c4041ea9ef7b",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"babies",
+												"babies",
+												"appointments",
+												"686fca192476c4041ea9ef7b"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "341"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"155-WQsnobv9EUZInCT4Q8dxXGvyeGI\""
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 10 Jul 2025 22:57:16 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Appointment created successfully\",\n    \"appointment\": {\n        \"title\": \"Antibiotics\",\n        \"type\": \"vaccine\",\n        \"date\": \"2025-07-15T00:00:00.000Z\",\n        \"time\": \"09:00\",\n        \"notifyAtTime\": true,\n        \"notifyOneDayBefore\": true,\n        \"durationDays\": 5,\n        \"repeat\": \"daily\",\n        \"user\": \"686f9c154bccf4422ec14fe1\",\n        \"babyId\": \"686fca192476c4041ea9ef7b\",\n        \"_id\": \"6870454cdf63453b9b281d35\",\n        \"__v\": 0\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "getAppointments",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmY5YzE1NGJjY2Y0NDIyZWMxNGZlMSIsImVtYWlsIjoibW9teTZAZ21haWwuY29tIiwiaWF0IjoxNzUyMTg1NDU4LCJleHAiOjE3NTIyNzE4NTh9.KQPrCcpsquCDBf4l0nXL4zVe_4NlQm-CjVtAiAU_o2U",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/babies/babies/appointments/686fca192476c4041ea9ef7b",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"babies",
+										"babies",
+										"appointments",
+										"686fca192476c4041ea9ef7b"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "getAppointments",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "localhost:3000/api/babies/babies/appointments/686fca192476c4041ea9ef7b",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"babies",
+												"babies",
+												"appointments",
+												"686fca192476c4041ea9ef7b"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1403"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"57b-LaVfYqIsFPzf307E95h2IrVqbq0\""
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 10 Jul 2025 22:58:55 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"appointments\": [\n        {\n            \"_id\": \"68703a8ba23fee07e2c1e0ba\",\n            \"title\": \"Checkup\",\n            \"date\": \"2025-07-15T09:00:00.000Z\",\n            \"time\": \"09:00\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"babyId\": \"686fca192476c4041ea9ef7b\",\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"68703b9df239269e55f57530\",\n            \"title\": \"doctore\",\n            \"date\": \"2025-07-15T09:00:00.000Z\",\n            \"time\": \"09:00\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"babyId\": \"686fca192476c4041ea9ef7b\",\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"68703bb9f239269e55f57534\",\n            \"title\": \"medicine2\",\n            \"date\": \"2025-07-15T09:00:00.000Z\",\n            \"time\": \"09:00\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"babyId\": \"686fca192476c4041ea9ef7b\",\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"6870444edf63453b9b281d2d\",\n            \"title\": \"Antibiotics\",\n            \"type\": \"medicine\",\n            \"date\": \"2025-07-15T00:00:00.000Z\",\n            \"time\": \"09:00\",\n            \"notifyAtTime\": true,\n            \"notifyOneDayBefore\": true,\n            \"durationDays\": 5,\n            \"repeat\": \"daily\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"babyId\": \"686fca192476c4041ea9ef7b\",\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"68704502df63453b9b281d31\",\n            \"title\": \"Antibiotics\",\n            \"type\": \"doctor\",\n            \"date\": \"2025-07-15T00:00:00.000Z\",\n            \"time\": \"09:00\",\n            \"notifyAtTime\": true,\n            \"notifyOneDayBefore\": true,\n            \"durationDays\": 5,\n            \"repeat\": \"daily\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"babyId\": \"686fca192476c4041ea9ef7b\",\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"6870454cdf63453b9b281d35\",\n            \"title\": \"Antibiotics\",\n            \"type\": \"vaccine\",\n            \"date\": \"2025-07-15T00:00:00.000Z\",\n            \"time\": \"09:00\",\n            \"notifyAtTime\": true,\n            \"notifyOneDayBefore\": true,\n            \"durationDays\": 5,\n            \"repeat\": \"daily\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"babyId\": \"686fca192476c4041ea9ef7b\",\n            \"__v\": 0\n        }\n    ]\n}"
+								}
+							]
+						},
+						{
+							"name": "dalateAppointment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmY5YzE1NGJjY2Y0NDIyZWMxNGZlMSIsImVtYWlsIjoibW9teTZAZ21haWwuY29tIiwiaWF0IjoxNzUyMTg1NDU4LCJleHAiOjE3NTIyNzE4NTh9.KQPrCcpsquCDBf4l0nXL4zVe_4NlQm-CjVtAiAU_o2U",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"title\": \"Checkup\",\r\n  \"date\": \"2025-07-15T09:00:00.000Z\",\r\n  \"time\": \"09:00\"\r\n}\r\n"
+								},
+								"url": {
+									"raw": "localhost:3000/api/babies/appointments/687045efdf63453b9b281d3b",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"babies",
+										"appointments",
+										"687045efdf63453b9b281d3b"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "dalateAppointment",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"title\": \"Checkup\",\r\n  \"date\": \"2025-07-15T09:00:00.000Z\",\r\n  \"time\": \"09:00\"\r\n}\r\n"
+										},
+										"url": {
+											"raw": "localhost:3000/api/babies/appointments/687045efdf63453b9b281d3b",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"babies",
+												"appointments",
+												"687045efdf63453b9b281d3b"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "46"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"2e-YahK6NTC7Esi0V+Dm3TFy6XN7xM\""
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 10 Jul 2025 23:00:16 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Appointment deleted successfully\"\n}"
+								}
+							]
+						},
+						{
+							"name": "updateAppointment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmY5YzE1NGJjY2Y0NDIyZWMxNGZlMSIsImVtYWlsIjoibW9teTZAZ21haWwuY29tIiwiaWF0IjoxNzUyMTg1NDU4LCJleHAiOjE3NTIyNzE4NTh9.KQPrCcpsquCDBf4l0nXL4zVe_4NlQm-CjVtAiAU_o2U",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"title\": \"Updated Medicine Time\",\r\n  \"time\": \"14:30\"\r\n}\r\n\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:3000/api/babies/appointments/6870444edf63453b9b281d2d",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"babies",
+										"appointments",
+										"6870444edf63453b9b281d2d"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "updateAppointment",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"title\": \"Updated Medicine Time\",\r\n  \"time\": \"14:30\"\r\n}\r\n\r\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:3000/api/babies/appointments/6870444edf63453b9b281d2d",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"babies",
+												"appointments",
+												"6870444edf63453b9b281d2d"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "339"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"153-/AXCsmfkcutOQcrZzhoZoLbN2GM\""
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 10 Jul 2025 23:02:56 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Appointment updated\",\n    \"appointment\": {\n        \"_id\": \"6870444edf63453b9b281d2d\",\n        \"title\": \"Updated Medicine Time\",\n        \"type\": \"medicine\",\n        \"date\": \"2025-07-15T00:00:00.000Z\",\n        \"time\": \"14:30\",\n        \"notifyAtTime\": true,\n        \"notifyOneDayBefore\": true,\n        \"durationDays\": 5,\n        \"repeat\": \"daily\",\n        \"user\": \"686f9c154bccf4422ec14fe1\",\n        \"babyId\": \"686fca192476c4041ea9ef7b\",\n        \"__v\": 0\n    }\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "cry analysis",
+					"item": [
+						{
+							"name": "getCryAnalysis",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmY5YzE1NGJjY2Y0NDIyZWMxNGZlMSIsImVtYWlsIjoibW9teTZAZ21haWwuY29tIiwiaWF0IjoxNzUyMTg1NDU4LCJleHAiOjE3NTIyNzE4NTh9.KQPrCcpsquCDBf4l0nXL4zVe_4NlQm-CjVtAiAU_o2U",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/babies/analysis/686fca192476c4041ea9ef7b",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"babies",
+										"analysis",
+										"686fca192476c4041ea9ef7b"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "getCryAnalysis",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "localhost:3000/api/babies/analysis/686fca192476c4041ea9ef7b",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"babies",
+												"analysis",
+												"686fca192476c4041ea9ef7b"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "354"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"162-YuilPn85SOlrzQ5nNZ+EZ8s6uaY\""
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 11 Jul 2025 00:21:45 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"analyses\": [\n        {\n            \"_id\": \"68705909130ea9a1114629aa\",\n            \"reason\": \"Hungry\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"babyId\": \"686fca192476c4041ea9ef7b\",\n            \"timestamp\": \"2025-07-11T00:21:29.113Z\",\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"6870412a3bf7abe44bf60bb1\",\n            \"reason\": \"Hungry\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"babyId\": \"686fca192476c4041ea9ef7b\",\n            \"timestamp\": \"2025-07-10T22:39:38.523Z\",\n            \"__v\": 0\n        }\n    ]\n}"
+								}
+							]
+						},
+						{
+							"name": "createAnalysis",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmY5YzE1NGJjY2Y0NDIyZWMxNGZlMSIsImVtYWlsIjoibW9teTZAZ21haWwuY29tIiwiaWF0IjoxNzUyMTg1NDU4LCJleHAiOjE3NTIyNzE4NTh9.KQPrCcpsquCDBf4l0nXL4zVe_4NlQm-CjVtAiAU_o2U",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"reason\":\"Hungry\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:3000/api/babies/analysis/686fca192476c4041ea9ef7b",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"babies",
+										"analysis",
+										"686fca192476c4041ea9ef7b"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "createAnalysis",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"reason\":\"Hungry\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:3000/api/babies/analysis/684b6711fbc4b2845f95b555",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"babies",
+												"analysis",
+												"684b6711fbc4b2845f95b555"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "224"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"e0-0x8A7gnJpNEVLgjj3z6pdrgJBZs\""
+										},
+										{
+											"key": "Date",
+											"value": "Sat, 14 Jun 2025 00:30:43 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Analysis created successfully\",\n    \"analysis\": {\n        \"reason\": \"Hungry\",\n        \"user\": \"684b5fdf847095aa92e731f3\",\n        \"babyId\": \"684b6711fbc4b2845f95b555\",\n        \"_id\": \"684cc2b3c8e403d68e1f6808\",\n        \"timestamp\": \"2025-06-14T00:30:43.911Z\",\n        \"__v\": 0\n    }\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "feeding",
+					"item": [
+						{
+							"name": "addFeeding",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmY5YzE1NGJjY2Y0NDIyZWMxNGZlMSIsImVtYWlsIjoibW9teTZAZ21haWwuY29tIiwiaWF0IjoxNzUyNDI2NDExLCJleHAiOjE3NTI1MTI4MTF9._0gqqvaWaowL594rUxxtXWm-KGaAu_yvotVsAcXCZ04",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:3000/api/babies/feeding/68701c1b98e0adad07cc2d28",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"babies",
+										"feeding",
+										"68701c1b98e0adad07cc2d28"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "addFeeding",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:3000/api/babies/feeding/68701c1b98e0adad07cc2d28",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"babies",
+												"feeding",
+												"68701c1b98e0adad07cc2d28"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "314"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"13a-ZxDhHmKrIRCkkJqnPoagzGZJv5M\""
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 13 Jul 2025 17:07:12 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Feeding added successfully\",\n    \"feeding\": {\n        \"babyId\": \"68701c1b98e0adad07cc2d28\",\n        \"title\": \"Feeding Reminder\",\n        \"time\": \"2025-07-13T17:07:12.581Z\",\n        \"recurrence\": \"every_3_hours\",\n        \"notifyAtTime\": true,\n        \"lastFeeding\": \"2025-07-13T17:07:12.581Z\",\n        \"user\": \"686f9c154bccf4422ec14fe1\",\n        \"_id\": \"6873e7c0b334cbf3f288af1e\",\n        \"__v\": 0\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "getFeedingsByBaby",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmY5YzE1NGJjY2Y0NDIyZWMxNGZlMSIsImVtYWlsIjoibW9teTZAZ21haWwuY29tIiwiaWF0IjoxNzUyNDI2NDExLCJleHAiOjE3NTI1MTI4MTF9._0gqqvaWaowL594rUxxtXWm-KGaAu_yvotVsAcXCZ04",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/babies/feedings/68701c1b98e0adad07cc2d28",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"babies",
+										"feedings",
+										"68701c1b98e0adad07cc2d28"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "getFeedingsByBaby",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "localhost:3000/api/babies/feedings/68701c1b98e0adad07cc2d28",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"babies",
+												"feedings",
+												"68701c1b98e0adad07cc2d28"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1598"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"63e-jtV8kwi0PSWnVrJIX7Nq6FyjndQ\""
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 13 Jul 2025 17:13:44 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"feedings\": [\n        {\n            \"_id\": \"6873e8a5b334cbf3f288af38\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"title\": \"Feeding Reminder\",\n            \"time\": \"2025-07-13T17:11:01.908Z\",\n            \"recurrence\": \"every_3_hours\",\n            \"notifyAtTime\": true,\n            \"lastFeeding\": \"2025-07-13T17:11:01.908Z\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"6873e843b334cbf3f288af2e\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"title\": \"Feeding Reminder\",\n            \"time\": \"2025-07-13T17:09:23.949Z\",\n            \"recurrence\": \"every_3_hours\",\n            \"notifyAtTime\": true,\n            \"lastFeeding\": \"2025-07-13T17:09:23.949Z\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"6873e83eb334cbf3f288af2a\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"title\": \"Feeding Reminder\",\n            \"time\": \"2025-07-13T17:09:18.738Z\",\n            \"recurrence\": \"every_3_hours\",\n            \"notifyAtTime\": true,\n            \"lastFeeding\": \"2025-07-13T17:09:18.738Z\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"6873e83bb334cbf3f288af26\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"title\": \"Feeding Reminder\",\n            \"time\": \"2025-07-13T17:09:15.073Z\",\n            \"recurrence\": \"every_3_hours\",\n            \"notifyAtTime\": true,\n            \"lastFeeding\": \"2025-07-13T17:09:15.073Z\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"6873e7fab334cbf3f288af22\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"title\": \"Feeding Reminder\",\n            \"time\": \"2025-07-13T17:08:10.871Z\",\n            \"recurrence\": \"every_3_hours\",\n            \"notifyAtTime\": true,\n            \"lastFeeding\": \"2025-07-13T17:08:10.871Z\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"6873e7c0b334cbf3f288af1e\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"title\": \"Feeding Reminder\",\n            \"time\": \"2025-07-13T17:07:12.581Z\",\n            \"recurrence\": \"every_3_hours\",\n            \"notifyAtTime\": true,\n            \"lastFeeding\": \"2025-07-13T17:07:12.581Z\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"__v\": 0\n        }\n    ]\n}"
+								}
+							]
+						},
+						{
+							"name": "deleteFeeding",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmY5YzE1NGJjY2Y0NDIyZWMxNGZlMSIsImVtYWlsIjoibW9teTZAZ21haWwuY29tIiwiaWF0IjoxNzUyNDI2NDExLCJleHAiOjE3NTI1MTI4MTF9._0gqqvaWaowL594rUxxtXWm-KGaAu_yvotVsAcXCZ04",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \r\n}"
+								},
+								"url": {
+									"raw": "localhost:3000/api/babies/feeding/6873e8a5b334cbf3f288af38",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"babies",
+										"feeding",
+										"6873e8a5b334cbf3f288af38"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "deleteFeeding",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \r\n}"
+										},
+										"url": {
+											"raw": "localhost:3000/api/babies/feeding/6873e8a5b334cbf3f288af38",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"babies",
+												"feeding",
+												"6873e8a5b334cbf3f288af38"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "42"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"2a-os2+hSt5ighE72uqxsEGfldwEkY\""
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 13 Jul 2025 17:16:52 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Feeding deleted successfully\"\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "danger alert",
+					"item": [
+						{
+							"name": "New Request",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "New Request",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "notification",
+					"item": [
+						{
+							"name": "New Request",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "New Request",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "New Request",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "New Request",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "New Request",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "stats",
+					"item": [
+						{
+							"name": "growthStats",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmY5YzE1NGJjY2Y0NDIyZWMxNGZlMSIsImVtYWlsIjoibW9teTZAZ21haWwuY29tIiwiaWF0IjoxNzUyNDI2NDExLCJleHAiOjE3NTI1MTI4MTF9._0gqqvaWaowL594rUxxtXWm-KGaAu_yvotVsAcXCZ04",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/babies/reports/growth/68701c1b98e0adad07cc2d28",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"babies",
+										"reports",
+										"growth",
+										"68701c1b98e0adad07cc2d28"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "growthStats",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "localhost:3000/api/babies/reports/growth/68701c1b98e0adad07cc2d28",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"babies",
+												"reports",
+												"growth",
+												"68701c1b98e0adad07cc2d28"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "38"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"26-Oiv5TH2yYJN+gBGE/YUs5w19avI\""
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 13 Jul 2025 17:30:20 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"weight\": 7,\n    \"height\": 70,\n    \"ageMonths\": 7\n}"
+								}
+							]
+						},
+						{
+							"name": "feedingStats",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmY5YzE1NGJjY2Y0NDIyZWMxNGZlMSIsImVtYWlsIjoibW9teTZAZ21haWwuY29tIiwiaWF0IjoxNzUyNDI2NDExLCJleHAiOjE3NTI1MTI4MTF9._0gqqvaWaowL594rUxxtXWm-KGaAu_yvotVsAcXCZ04",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/babies/reports/feeding/68701c1b98e0adad07cc2d28",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"babies",
+										"reports",
+										"feeding",
+										"68701c1b98e0adad07cc2d28"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "feedingReport",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "localhost:3000/api/babies/reports/feeding/68701c1b98e0adad07cc2d28",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"babies",
+												"reports",
+												"feeding",
+												"68701c1b98e0adad07cc2d28"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1337"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"539-BiaS77T3IIj/BZAJWxCOVxjCgBY\""
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 13 Jul 2025 17:42:59 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"feedingData\": [\n        {\n            \"_id\": \"6873e843b334cbf3f288af2e\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"title\": \"Feeding Reminder\",\n            \"time\": \"2025-07-13T17:09:23.949Z\",\n            \"recurrence\": \"every_3_hours\",\n            \"notifyAtTime\": true,\n            \"lastFeeding\": \"2025-07-13T17:09:23.949Z\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"6873e83eb334cbf3f288af2a\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"title\": \"Feeding Reminder\",\n            \"time\": \"2025-07-13T17:09:18.738Z\",\n            \"recurrence\": \"every_3_hours\",\n            \"notifyAtTime\": true,\n            \"lastFeeding\": \"2025-07-13T17:09:18.738Z\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"6873e83bb334cbf3f288af26\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"title\": \"Feeding Reminder\",\n            \"time\": \"2025-07-13T17:09:15.073Z\",\n            \"recurrence\": \"every_3_hours\",\n            \"notifyAtTime\": true,\n            \"lastFeeding\": \"2025-07-13T17:09:15.073Z\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"6873e7fab334cbf3f288af22\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"title\": \"Feeding Reminder\",\n            \"time\": \"2025-07-13T17:08:10.871Z\",\n            \"recurrence\": \"every_3_hours\",\n            \"notifyAtTime\": true,\n            \"lastFeeding\": \"2025-07-13T17:08:10.871Z\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"6873e7c0b334cbf3f288af1e\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"title\": \"Feeding Reminder\",\n            \"time\": \"2025-07-13T17:07:12.581Z\",\n            \"recurrence\": \"every_3_hours\",\n            \"notifyAtTime\": true,\n            \"lastFeeding\": \"2025-07-13T17:07:12.581Z\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"__v\": 0\n        }\n    ]\n}"
+								}
+							]
+						},
+						{
+							"name": "sleepStats",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmY5YzE1NGJjY2Y0NDIyZWMxNGZlMSIsImVtYWlsIjoibW9teTZAZ21haWwuY29tIiwiaWF0IjoxNzUyNDI2NDExLCJleHAiOjE3NTI1MTI4MTF9._0gqqvaWaowL594rUxxtXWm-KGaAu_yvotVsAcXCZ04",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/babies/reports/sleep/68701c1b98e0adad07cc2d28",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"babies",
+										"reports",
+										"sleep",
+										"68701c1b98e0adad07cc2d28"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "sleepReport",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "localhost:3000/api/babies/reports/sleep/68701c1b98e0adad07cc2d28",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"babies",
+												"reports",
+												"sleep",
+												"68701c1b98e0adad07cc2d28"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1254"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"4e6-rc6ZTYQOTwU/esFd9AmcTTUzlvo\""
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 13 Jul 2025 17:48:35 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"sleepData\": [\n        {\n            \"_id\": \"6873dfe6eda9b62ca4e2784f\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"startTime\": \"2025-07-13T16:33:42.080Z\",\n            \"notes\": \"\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"isSleeping\": false,\n            \"__v\": 0,\n            \"duration\": 0,\n            \"endTime\": \"2025-07-13T16:34:41.819Z\"\n        },\n        {\n            \"_id\": \"68701e12f7608805a359a2eb\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"startTime\": \"2025-07-10T20:09:54.067Z\",\n            \"notes\": \"\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"isSleeping\": true,\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"68701e0df7608805a359a2e7\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"startTime\": \"2025-07-10T20:09:49.054Z\",\n            \"notes\": \"\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"isSleeping\": true,\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"68701e0bf7608805a359a2e3\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"startTime\": \"2025-07-10T20:09:47.505Z\",\n            \"notes\": \"\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"isSleeping\": true,\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"68701df1f7608805a359a2da\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"startTime\": \"2025-07-10T20:09:21.273Z\",\n            \"notes\": \"\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"isSleeping\": false,\n            \"__v\": 0,\n            \"duration\": 0,\n            \"endTime\": \"2025-07-10T20:09:36.231Z\"\n        },\n        {\n            \"_id\": \"68701ddbf7608805a359a2d3\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"startTime\": \"2025-07-10T20:08:59.210Z\",\n            \"notes\": \"\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"isSleeping\": false,\n            \"__v\": 0,\n            \"duration\": 0,\n            \"endTime\": \"2025-07-10T20:09:14.515Z\"\n        }\n    ]\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "sleep",
+					"item": [
+						{
+							"name": "startSleep",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmY5YzE1NGJjY2Y0NDIyZWMxNGZlMSIsImVtYWlsIjoibW9teTZAZ21haWwuY29tIiwiaWF0IjoxNzUyNDI0MzA2LCJleHAiOjE3NTI1MTA3MDZ9.g2T2-JaLwzGSACrjC6bnmA1Q8Tykruvy08Zu7aLSWos",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:3000/api/babies/sleep/68701c1b98e0adad07cc2d28",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"babies",
+										"sleep",
+										"68701c1b98e0adad07cc2d28"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "startSleep",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "localhost:3000/api/babies/sleep/68701c1b98e0adad07cc2d28",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"babies",
+												"sleep",
+												"68701c1b98e0adad07cc2d28"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "237"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"ed-Rk5GoqxhBxa0qFZxLCO4Lq3Vtg8\""
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 13 Jul 2025 16:33:42 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Sleep session started successfully\",\n    \"sleep\": {\n        \"babyId\": \"68701c1b98e0adad07cc2d28\",\n        \"startTime\": \"2025-07-13T16:33:42.080Z\",\n        \"notes\": \"\",\n        \"user\": \"686f9c154bccf4422ec14fe1\",\n        \"isSleeping\": true,\n        \"_id\": \"6873dfe6eda9b62ca4e2784f\",\n        \"__v\": 0\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "endSleep",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmY5YzE1NGJjY2Y0NDIyZWMxNGZlMSIsImVtYWlsIjoibW9teTZAZ21haWwuY29tIiwiaWF0IjoxNzUyNDI0MzA2LCJleHAiOjE3NTI1MTA3MDZ9.g2T2-JaLwzGSACrjC6bnmA1Q8Tykruvy08Zu7aLSWos",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/babies/sleep/end/6873dfe6eda9b62ca4e2784f",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"babies",
+										"sleep",
+										"end",
+										"6873dfe6eda9b62ca4e2784f"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "endSleep",
+									"originalRequest": {
+										"method": "PATCH",
+										"header": [],
+										"url": {
+											"raw": "localhost:3000/api/babies/sleep/end/6873dfe6eda9b62ca4e2784f",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"babies",
+												"sleep",
+												"end",
+												"6873dfe6eda9b62ca4e2784f"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "286"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"11e-rUdy0BJ0Wl3ytOgPzT+/a4PEY9Q\""
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 13 Jul 2025 16:34:41 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Sleep session ended successfully\",\n    \"sleep\": {\n        \"_id\": \"6873dfe6eda9b62ca4e2784f\",\n        \"babyId\": \"68701c1b98e0adad07cc2d28\",\n        \"startTime\": \"2025-07-13T16:33:42.080Z\",\n        \"notes\": \"\",\n        \"user\": \"686f9c154bccf4422ec14fe1\",\n        \"isSleeping\": false,\n        \"__v\": 0,\n        \"endTime\": \"2025-07-13T16:34:41.819Z\",\n        \"duration\": 0\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "gatAllSleep",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmY5YzE1NGJjY2Y0NDIyZWMxNGZlMSIsImVtYWlsIjoibW9teTZAZ21haWwuY29tIiwiaWF0IjoxNzUyMTgwODQ3LCJleHAiOjE3NTIyNjcyNDd9.djGEX3f2EvaQh38hd1reNhxciUe7iKmxD4mcCcGNNnA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/babies/sleep/baby/68701c1b98e0adad07cc2d28",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"babies",
+										"sleep",
+										"baby",
+										"68701c1b98e0adad07cc2d28"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "gatAllSleep",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "localhost:3000/api/babies/sleep/baby/68701c1b98e0adad07cc2d28",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"babies",
+												"sleep",
+												"baby",
+												"68701c1b98e0adad07cc2d28"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "1490"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"5d2-hgzWrTivG+Q1zSH0Dyf3kXhqfww\""
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 10 Jul 2025 21:21:36 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"sleepSessions\": [\n        {\n            \"_id\": \"68702cb5d85e1c9f84ec2709\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"startTime\": \"2025-07-10T21:12:21.908Z\",\n            \"notes\": \"\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"isSleeping\": false,\n            \"__v\": 0,\n            \"duration\": 0,\n            \"endTime\": \"2025-07-10T21:12:47.915Z\"\n        },\n        {\n            \"_id\": \"68701e16f7608805a359a2ef\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"startTime\": \"2025-07-10T20:09:58.913Z\",\n            \"notes\": \"\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"isSleeping\": false,\n            \"__v\": 0,\n            \"duration\": 0,\n            \"endTime\": \"2025-07-10T20:10:58.738Z\"\n        },\n        {\n            \"_id\": \"68701e12f7608805a359a2eb\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"startTime\": \"2025-07-10T20:09:54.067Z\",\n            \"notes\": \"\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"isSleeping\": true,\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"68701e0df7608805a359a2e7\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"startTime\": \"2025-07-10T20:09:49.054Z\",\n            \"notes\": \"\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"isSleeping\": true,\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"68701e0bf7608805a359a2e3\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"startTime\": \"2025-07-10T20:09:47.505Z\",\n            \"notes\": \"\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"isSleeping\": true,\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"68701df1f7608805a359a2da\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"startTime\": \"2025-07-10T20:09:21.273Z\",\n            \"notes\": \"\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"isSleeping\": false,\n            \"__v\": 0,\n            \"duration\": 0,\n            \"endTime\": \"2025-07-10T20:09:36.231Z\"\n        },\n        {\n            \"_id\": \"68701ddbf7608805a359a2d3\",\n            \"babyId\": \"68701c1b98e0adad07cc2d28\",\n            \"startTime\": \"2025-07-10T20:08:59.210Z\",\n            \"notes\": \"\",\n            \"user\": \"686f9c154bccf4422ec14fe1\",\n            \"isSleeping\": false,\n            \"__v\": 0,\n            \"duration\": 0,\n            \"endTime\": \"2025-07-10T20:09:14.515Z\"\n        }\n    ]\n}"
+								}
+							]
+						},
+						{
+							"name": "deleteSleep",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NmY5YzE1NGJjY2Y0NDIyZWMxNGZlMSIsImVtYWlsIjoibW9teTZAZ21haWwuY29tIiwiaWF0IjoxNzUyMTgwODQ3LCJleHAiOjE3NTIyNjcyNDd9.djGEX3f2EvaQh38hd1reNhxciUe7iKmxD4mcCcGNNnA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/babies/sleep/68701e16f7608805a359a2ef",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"babies",
+										"sleep",
+										"68701e16f7608805a359a2ef"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "deleteSleep",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "localhost:3000/api/babies/sleep/68701e16f7608805a359a2ef",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"babies",
+												"sleep",
+												"68701e16f7608805a359a2ef"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:3001"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "48"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"30-eT5Hhel5Q6ypkrYMyPKIyIo5iFg\""
+										},
+										{
+											"key": "Date",
+											"value": "Thu, 10 Jul 2025 21:38:53 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Sleep session deleted successfully\"\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "updateBabyInfo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbXkzQGdtYWlsLmNvbSIsImlhdCI6MTc0OTg0MzczMX0.CwqO6P0v6gSINMR8PfhA666KvK2JYRCxUmdqRt9dvkw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"babyName\":\"loliii\", \r\n\"babyGender\":\"Male\"\r\n }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/babies/info/684b6711fbc4b2845f95b555",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"babies",
+								"info",
+								"684b6711fbc4b2845f95b555"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "updateBabyInfo",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{ \"babyName\":\"loliii\", \r\n\"babyGender\":\"Male\"\r\n }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:3000/api/babies/info/684b6711fbc4b2845f95b555",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"babies",
+										"info",
+										"684b6711fbc4b2845f95b555"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "http://localhost:3001"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "239"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"ef-FKbK0yl4iBgQhdk2taWx7cUQYBg\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 13 Jun 2025 21:44:23 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Child info updated successfully\",\n    \"baby\": {\n        \"_id\": \"684b6711fbc4b2845f95b555\",\n        \"name\": \"loliii\",\n        \"birthDate\": \"2024-12-11T21:00:00.000Z\",\n        \"gender\": \"Male\",\n        \"height\": 70,\n        \"weight\": 7,\n        \"imageUrl\": null,\n        \"user\": \"684b5fdf847095aa92e731f3\",\n        \"__v\": 0\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "loginAdmin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\":\"momyhala@gmail.com\",\r\n  \"password\": \"000000\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/admin/login",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"admin",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "loginAdmin",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\":\"momyhala@gmail.com\",\r\n  \"password\": \"000000\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:3000/api/admin/login",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"admin",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "http://localhost:3001"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "432"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"1b0-zEBejgEKnZ2JP7U4STq4Fihy1bo\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 13 Jun 2025 01:27:50 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"welcome admin\",\n    \"user\": {\n        \"userType\": \"Mother\",\n        \"_id\": \"68447e09bd84d90f4e52eb15\",\n        \"username\": \"momyhala\",\n        \"email\": \"momyhala@gmail.com\",\n        \"password\": \"$2b$12$wxt7T2DxL3Hsr66awE7Fxu8G7R2BfKJJBNZDEwL6kGkctJW9t97yC\",\n        \"phoneNumber\": \"00000\",\n        \"isBlocked\": false,\n        \"role\": \"admin\",\n        \"__v\": 0\n    },\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbXloYWxhQGdtYWlsLmNvbSIsImlhdCI6MTc0OTc3ODA3MH0.yWDu2U2JfmkOGk-HJP-iokkZm2BjVpUbCtftCZ5uTBk\"\n}"
+						}
+					]
+				},
+				{
+					"name": "blockUser",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbXloYWxhQGdtYWlsLmNvbSIsImlhdCI6MTc0OTc3ODA3MH0.yWDu2U2JfmkOGk-HJP-iokkZm2BjVpUbCtftCZ5uTBk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/admin/user/block/6846e2cf5404e4c2f4f0b780",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"admin",
+								"user",
+								"block",
+								"6846e2cf5404e4c2f4f0b780"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "blockUser",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/admin/user/block/6846e2cf5404e4c2f4f0b780",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"admin",
+										"user",
+										"block",
+										"6846e2cf5404e4c2f4f0b780"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "http://localhost:3001"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "279"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"117-ratjLbaN8PvD2RdKbZFw/gGNJ1M\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 13 Jun 2025 01:31:38 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"User blocked successfully\",\n    \"user\": {\n        \"userType\": \"Mother\",\n        \"_id\": \"6846e2cf5404e4c2f4f0b780\",\n        \"username\": \"hala2\",\n        \"email\": \"momy@gmail.com\",\n        \"password\": \"$2b$12$LdGuJXswOVT3J5Bo9SgDruS9WDbD/17vxgdrNCIwXShhTgfoBT/YW\",\n        \"phoneNumber\": \"2222\",\n        \"isBlocked\": true,\n        \"role\": \"user\",\n        \"__v\": 0\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "getUserById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbXloYWxhQGdtYWlsLmNvbSIsImlhdCI6MTc0OTc3ODA3MH0.yWDu2U2JfmkOGk-HJP-iokkZm2BjVpUbCtftCZ5uTBk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/admin/user/6846e2cf5404e4c2f4f0b780",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"admin",
+								"user",
+								"6846e2cf5404e4c2f4f0b780"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "getUserById",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/admin/user/6846e2cf5404e4c2f4f0b780",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"admin",
+										"user",
+										"6846e2cf5404e4c2f4f0b780"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "http://localhost:3001"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "159"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"9f-r0XlgLzbHQD7yurWsPpvTJxbdJE\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 13 Jun 2025 01:29:03 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"userType\": \"Mother\",\n    \"_id\": \"6846e2cf5404e4c2f4f0b780\",\n    \"username\": \"hala2\",\n    \"email\": \"momy@gmail.com\",\n    \"phoneNumber\": \"2222\",\n    \"isBlocked\": false,\n    \"role\": \"user\",\n    \"__v\": 0\n}"
+						}
+					]
+				},
+				{
+					"name": "getUsers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbXloYWxhQGdtYWlsLmNvbSIsImlhdCI6MTc0OTc3ODA3MH0.yWDu2U2JfmkOGk-HJP-iokkZm2BjVpUbCtftCZ5uTBk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/admin/users",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"admin",
+								"users"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "getUsers",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:3000/api/admin/users",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"admin",
+										"users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "http://localhost:3001"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Access-Control-Allow-Credentials",
+									"value": "true"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1204"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"4b4-T38Q2mzDWspEce8pHRGcs7oacsw\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 13 Jun 2025 01:29:45 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"users\": [\n        {\n            \"userType\": \"Mother\",\n            \"_id\": \"68447e09bd84d90f4e52eb15\",\n            \"username\": \"momyhala\",\n            \"email\": \"momyhala@gmail.com\",\n            \"password\": \"$2b$12$wxt7T2DxL3Hsr66awE7Fxu8G7R2BfKJJBNZDEwL6kGkctJW9t97yC\",\n            \"phoneNumber\": \"00000\",\n            \"isBlocked\": false,\n            \"role\": \"admin\",\n            \"__v\": 0\n        },\n        {\n            \"userType\": \"Mother\",\n            \"_id\": \"68447ee7bd84d90f4e52eb19\",\n            \"username\": \"momyhala2\",\n            \"email\": \"momyhala2@gmail.com\",\n            \"password\": \"$2b$12$ROj5PaFcAU6uT9kkVjmbQ.U95LhLwTtEYS2UvLojaJ3h/dt1PMBt6\",\n            \"phoneNumber\": \"00000\",\n            \"isBlocked\": false,\n            \"role\": \"admin\",\n            \"__v\": 0\n        },\n        {\n            \"userType\": \"Mother\",\n            \"_id\": \"6846e2cf5404e4c2f4f0b780\",\n            \"username\": \"hala2\",\n            \"email\": \"momy@gmail.com\",\n            \"password\": \"$2b$12$LdGuJXswOVT3J5Bo9SgDruS9WDbD/17vxgdrNCIwXShhTgfoBT/YW\",\n            \"phoneNumber\": \"2222\",\n            \"isBlocked\": false,\n            \"role\": \"user\",\n            \"__v\": 0\n        },\n        {\n            \"userType\": \"Mother\",\n            \"_id\": \"6846fada7929a2692bda54d2\",\n            \"username\": \"momy2\",\n            \"email\": \"momy2@gmail.com\",\n            \"password\": \"$2b$12$0Ht/y.KPByDLgKuDTvSjQOIJPoyGfU77gADeZowue1r5Rm1fLDmBW\",\n            \"phoneNumber\": \"00000\",\n            \"isBlocked\": false,\n            \"role\": \"user\",\n            \"__v\": 0\n        },\n        {\n            \"_id\": \"684b5fdf847095aa92e731f3\",\n            \"username\": \"hala3\",\n            \"userType\": \"Mother\",\n            \"email\": \"momy3@gmail.com\",\n            \"password\": \"$2b$12$mAmknycr3A3hG30DXybb6.cyHbpn1iZAAJZrnWx2FcKlT8OxMG8Ua\",\n            \"phoneNumber\": \"3333\",\n            \"isBlocked\": false,\n            \"role\": \"user\",\n            \"__v\": 0\n        }\n    ]\n}"
+						}
+					]
+				}
+			]
+		}
+	]
+}
