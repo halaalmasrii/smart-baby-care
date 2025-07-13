@@ -33,7 +33,7 @@ class _FeedingScheduleScreenState extends State<FeedingScheduleScreen> {
       return;
     }
 
-    final uri = Uri.parse("http://localhost:3000/api/feedings/$babyId");
+    final uri = Uri.parse("http://localhost:3000/api/babies/feedings/$babyId");
 
     try {
       final response = await http.get(uri, headers: {
@@ -80,53 +80,49 @@ class _FeedingScheduleScreenState extends State<FeedingScheduleScreen> {
   }
 
   Future<bool> sendFeedingToServer(DateTime now) async {
-    final authService = Provider.of<AuthService>(context, listen: false);
-    final token = authService.token;
-    final babyId = authService.selectedBabyId;
-    final userId = authService.userId;
+  final authService = Provider.of<AuthService>(context, listen: false);
+  final token = authService.token;
+  final babyId = authService.selectedBabyId;
+  final userId = authService.userId;
 
-    if (token == null || babyId == null || userId == null) {
-      print("Missing auth data");
-      return false;
-    }
-
-    final uri = Uri.parse("http://localhost:3000/api/babies/feedings/$babyId");
-
-    final body = {
-      "user": userId,
-      "title": "Feeding Reminder",
-      "time": now.toIso8601String(),
-      "recurrence": "every_3_hours",
-      "notifyAtTime": true,
-      "lastFeeding": now.toIso8601String(),
-    };
-
-    try {
-      final response = await http.post(
-        uri,
-        headers: {
-          "Authorization": "Bearer $token",
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode({
-          "title": "Feeding Reminder",
-          "recurrence": "every_3_hours",
-          "notifyAtTime": true,
-        }),
-      );
-
-      if (response.statusCode == 201) {
-        print("Feeding saved successfully");
-        return true;
-      } else {
-        print("Failed to save feeding: ${response.body}");
-        return false;
-      }
-    } catch (e) {
-      print("Exception: $e");
-      return false;
-    }
+  if (token == null || babyId == null || userId == null) {
+    print("Missing auth data");
+    return false;
   }
+
+  final uri = Uri.parse("http://localhost:3000/api/babies/feedings/$babyId");
+
+  final body = {
+    "user": userId,
+    "title": "Feeding Reminder",
+    "time": now.toIso8601String(),
+    "recurrence": "every_3_hours",
+    "notifyAtTime": true,
+    "lastFeeding": now.toIso8601String(),
+  };
+
+  try {
+    final response = await http.post(
+      uri,
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode == 201) {
+      print("Feeding saved successfully");
+      return true;
+    } else {
+      print("Failed to save feeding: ${response.body}");
+      return false;
+    }
+  } catch (e) {
+    print("Exception: $e");
+    return false;
+  }
+}
 
   Future<void> scheduleFeedingReminder(DateTime reminderTime, DateTime feedingTime) async {
     final prefs = await SharedPreferences.getInstance();

@@ -7,10 +7,11 @@ class NotificationUtils {
   static final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
 
   static Future<void> scheduleNotification(Appointment appointment) async {
-    final id = int.tryParse(appointment.id.replaceAll(RegExp(r'\D'), '')) ?? DateTime.now().millisecondsSinceEpoch;
-
+    final String baseId = appointment.id ?? DateTime.now().millisecondsSinceEpoch.toString();
+    final numericId = int.tryParse(baseId.replaceAll(RegExp(r'[^0-9]'), '')) ?? baseId.hashCode;
+    final id = numericId.abs(); // لتجنب الأرقام السالبة
     final scheduledDate = appointment.date ?? DateTime.now();
-    final scheduledTime = appointment.time ?? TimeOfDay.now();
+    final scheduledTime = appointment.times.isNotEmpty ? appointment.times.first : TimeOfDay.now();
 
     final tzDateTime = tz.TZDateTime.from(
       DateTime(

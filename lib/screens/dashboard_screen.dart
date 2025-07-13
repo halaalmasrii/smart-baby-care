@@ -24,6 +24,8 @@ class _DashboardScreenState extends State<DashboardScreen>
   int selectedBabyIndex = 0;
 
   String totalSleep = '--'; 
+  String todayFeedingCount = '--';
+
 
   @override
   void initState() {
@@ -39,6 +41,7 @@ class _DashboardScreenState extends State<DashboardScreen>
 
     fetchBabies();
     fetchTodayStats(); // استدعاء جلب الإحصائيات
+    fetchTodayFeedingCount(); // استدعاء عدد الرضاعات اليوم
   }
 
   Future<void> fetchBabies() async {
@@ -72,6 +75,36 @@ class _DashboardScreenState extends State<DashboardScreen>
       print("Error: $e");
     }
   }
+// تابع جلب عدد مرات الرضاعة
+  Future<void> fetchTodayFeedingCount() async {
+  final authService = Provider.of<AuthService>(context, listen: false);
+  final token = authService.token;
+  final babyId = authService.selectedBabyId;
+
+  if (token == null || babyId == null) return;
+
+  final uri = Uri.parse('http://localhost:3000/api/status/feeding/$babyId');
+
+
+  try {
+    final response = await http.get(
+      uri,
+      headers: {"Authorization": "Bearer $token"},
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      setState(() {
+        todayFeedingCount = '${data['count']} times';
+      });
+    } else {
+      print("Failed to fetch feeding stats: ${response.body}");
+    }
+  } catch (e) {
+    print("Error fetching feeding stats: $e");
+  }
+}
+
 
   // تابع جلب عدد ساعات النوم من الباكند
   Future<void> fetchTodayStats() async {
@@ -197,7 +230,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           children: [
             StatsCard(
               sleep: totalSleep, // الربط مع القيمة الديناميكية
-              feeding: '5 times',
+              feeding: todayFeedingCount,
               height: selectedBaby?['height']?.toString() ?? '--',
               weight: selectedBaby?['weight']?.toString() ?? '--',
               babyName: babyName,

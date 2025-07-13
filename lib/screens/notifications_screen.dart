@@ -17,6 +17,7 @@ class NotificationsScreen extends StatefulWidget {
 class _NotificationsScreenState extends State<NotificationsScreen> {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+
   List<Appointment> upcomingAppointments = [];
   final DateTime now = DateTime.now();
 
@@ -51,7 +52,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       InitializationSettings(android: initializationSettingsAndroid),
       onDidReceiveNotificationResponse: (details) {
         if (details.payload != null && details.payload!.contains('feeding')) {
-          Navigator.pushNamed(context, AppRoutes.schedule); // ✅ التنقل إلى شاشة الرضاعة
+          Navigator.pushNamed(context, AppRoutes.schedule); // التنقل إلى شاشة الرضاعة
         }
       },
     );
@@ -79,45 +80,49 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     for (final appointment in upcomingAppointments) {
       if (appointment.isNotificationDone) continue;
 
-      final scheduledDate = appointment.date ?? DateTime.now();
-      final scheduledTime = appointment.time ?? TimeOfDay.now();
+      if (appointment.date == null || appointment.times.isEmpty) continue;
 
-      final tzDateTime = tz.TZDateTime.from(
-        DateTime(scheduledDate.year, scheduledDate.month, scheduledDate.day,
-            scheduledTime.hour, scheduledTime.minute),
-        tz.local,
-      );
+      for (var time in appointment.times) {
+        final scheduledDate = appointment.date!;
+        final tzDateTime = tz.TZDateTime.from(
+          DateTime(scheduledDate.year, scheduledDate.month, scheduledDate.day,
+              time.hour, time.minute),
+          tz.local,
+        );
 
-      await flutterLocalNotificationsPlugin.zonedSchedule(
-        int.parse(appointment.id),
-        getNotificationTitle(appointment.type),
-        getNotificationBody(appointment.type),
-        tzDateTime,
-        NotificationDetails(
-          android: AndroidNotificationDetails(
-            appointment.type == AppointmentType.feeding
-                ? 'feeding_channel'
-                : 'general_channel',
-            appointment.type == AppointmentType.feeding
-                ? 'Feeding Alerts'
-                : 'General Notifications',
-            channelDescription: appointment.type == AppointmentType.feeding
-                ? 'Alerts after 3 hours from last feeding'
-                : 'General appointment alerts',
-            importance: Importance.max,
-            priority: Priority.high,
-            playSound: true,
-            sound: appointment.type == AppointmentType.feeding
-                ? RawResourceAndroidNotificationSound('notification_sound')
-                : null,
-            autoCancel: true,
+        final notificationId = int.parse('${appointment.id.hashCode}${time.hour}${time.minute}');
+
+        await flutterLocalNotificationsPlugin.zonedSchedule(
+          notificationId,
+          getNotificationTitle(appointment.type),
+          getNotificationBody(appointment.type),
+          tzDateTime,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              appointment.type == AppointmentType.feeding
+                  ? 'feeding_channel'
+                  : 'general_channel',
+              appointment.type == AppointmentType.feeding
+                  ? 'Feeding Alerts'
+                  : 'General Notifications',
+              channelDescription: appointment.type == AppointmentType.feeding
+                  ? 'Alerts after 3 hours from last feeding'
+                  : 'General appointment alerts',
+              importance: Importance.max,
+              priority: Priority.high,
+              playSound: true,
+              sound: appointment.type == AppointmentType.feeding
+                  ? const RawResourceAndroidNotificationSound('notification_sound')
+                  : null,
+              autoCancel: true,
+            ),
           ),
-        ),
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        payload: appointment.id,
-      );
+          androidAllowWhileIdle: true,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.absoluteTime,
+          payload: '${appointment.id}-${time.hour}:${time.minute}',
+        );
+      }
     }
   }
 
@@ -166,10 +171,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
-  Future<void> markAsDone(String id) async {
-    await flutterLocalNotificationsPlugin.cancel(int.parse(id));
+  Future<void> markAsDone(String id, {int hour = 0, int minute = 0}) async {
+    final parts = id.split('-');
+    final appointmentId = parts[0];
+    final timeHour = parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : hour;
+    final timeMinute = parts.length > 2 ? int.tryParse(parts[2]) ?? 0 : minute;
 
-    final index = upcomingAppointments.indexWhere((appt) => appt.id == id);
+    final notificationId = int.parse('$appointmentId$timeHour$timeMinute');
+
+    await flutterLocalNotificationsPlugin.cancel(notificationId);
+
+    final index = upcomingAppointments.indexWhere((appt) => appt.id == appointmentId);
     if (index != -1) {
       final appointment = upcomingAppointments[index];
 
@@ -177,7 +189,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         upcomingAppointments[index] = appointment.copyWith(isNotificationDone: true);
       });
 
-      // ✅ جدولة إشعار جديد بعد 3 ساعات في حالة Feeding
       if (appointment.type == AppointmentType.feeding) {
         final newReminderTime = appointment.lastFeeding?.add(const Duration(hours: 3)) ??
             DateTime.now().add(const Duration(hours: 3));
@@ -187,8 +198,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           type: AppointmentType.feeding,
           title: 'Feeding Reminder',
           date: newReminderTime,
-          time: TimeOfDay.fromDateTime(newReminderTime),
-          recurrence: 'every_3_hours',
+          times: [TimeOfDay.fromDateTime(newReminderTime)],
           notifyAtTime: true,
           lastFeeding: newReminderTime,
         );
@@ -224,12 +234,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 itemCount: upcomingAppointments.length,
                 itemBuilder: (context, index) {
                   final appointment = upcomingAppointments[index];
-                  final timeUntil = appointment.date!
-                      .difference(now)
-                      .inHours
-                      .abs()
-                      .toString()
-                      .padLeft(2, '0');
+                  final timeUntil = appointment.date != null
+                      ? appointment.date!
+                          .difference(now)
+                          .inHours
+                          .abs()
+                          .toString()
+                          .padLeft(2, '0')
+                      : '?';
 
                   return Card(
                     color: appointment.isNotificationDone
@@ -245,19 +257,26 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         '${appointment.title} - ${getNotificationTitle(appointment.type)}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color:
-                              appointment.isNotificationDone ? Colors.grey : color,
+                          color: appointment.isNotificationDone
+                              ? Colors.grey
+                              : color,
                           decoration: appointment.isNotificationDone
                               ? TextDecoration.lineThrough
                               : null,
                         ),
                       ),
-                      subtitle: Text(
-                        'In $timeUntil hours • ${appointment.date!.toLocal().toString()}',
-                        style: const TextStyle(color: Colors.black54),
-                      ),
+                      subtitle: appointment.date != null
+                          ? Text(
+                              'In $timeUntil hours • ${appointment.date!.toLocal().toString()}',
+                              style: const TextStyle(color: Colors.black54),
+                            )
+                          : const Text(
+                              'No date or time set',
+                              style: TextStyle(color: Colors.red),
+                            ),
                       trailing: ElevatedButton(
-                        onPressed: () => markAsDone(appointment.id),
+                        onPressed: () =>
+                            markAsDone(appointment.id!),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: appointment.isNotificationDone
                               ? Colors.grey
