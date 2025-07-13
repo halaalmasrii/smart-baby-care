@@ -15,6 +15,9 @@ import '../screens/sleep_timer_screen.dart';
 import '../screens/status_screen.dart';
 import '../screens/vaccination_schedule_screen.dart';
 import '../screens/sleep_archive_screen.dart';
+import '../services/auth_service.dart';
+import 'package:provider/provider.dart'; 
+
 
 class AppRoutes {
   static const String login = '/';
@@ -46,7 +49,10 @@ class AppRoutes {
     recommendations: (context) => RecommendationsScreen(),
     settings: (context) => SettingsScreen(),
     notifications: (context) => NotificationsScreen(),
-    babySound: (context) => BabySoundScreen(),  
+    babySound: (context) {
+      final authService = Provider.of<AuthService>(context, listen: false);
+      return BabySoundScreen(authService: authService);
+    },
     feeding: (context) => const FeedingScheduleScreen(),
     childInfo: (context) => const ChildInfoScreen(),
     signup: (context) => const SignUpScreen(),

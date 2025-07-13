@@ -1,49 +1,156 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'dart:math';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
+import 'dart:convert';
+import '../services/auth_service.dart';
 
 class BabySoundScreen extends StatefulWidget {
-  const BabySoundScreen({Key? key}) : super(key: key);
+  final AuthService authService;
+
+  const BabySoundScreen({
+    Key? key,
+    required this.authService,
+  }) : super(key: key);
 
   @override
   State<BabySoundScreen> createState() => _BabySoundScreenState();
 }
 
+
 class _BabySoundScreenState extends State<BabySoundScreen> {
   final List<_CryAnalysisResult> _history = [];
-  final List<String> _fakeReasons = [
-    'Hungry',
-    'Colic',
-    'Tired',
-    'Needs Burping',
-    'Discomfort',
-    'Wet Diaper',
-  ];
+  final recorder = FlutterSoundRecorder();
+  bool _isRecording = false;
+  File? _lastRecordedFile;
 
   final Map<String, IconData> _reasonIcons = {
-    'Hungry': Icons.restaurant,
-    'Colic': Icons.sick,
-    'Tired': Icons.bedtime,
-    'Needs Burping': Icons.air,
-    'Discomfort': Icons.sentiment_dissatisfied,
-    'Wet Diaper': Icons.baby_changing_station,
-  };
+  'belly pain': Icons.favorite,
+  'burping': Icons.air,
+  'cold_hot': Icons.ac_unit,
+  'discomfort': Icons.sentiment_dissatisfied,
+  'tired': Icons.bedtime,
+};
+
 
   _CryAnalysisResult? _latestResult;
 
-  void _simulateAnalysis() {
-    final random = Random();
-    final reason = _fakeReasons[random.nextInt(_fakeReasons.length)];
-    final time = DateTime.now();
+  @override
+  void initState() {
+    super.initState();
+    recorder.openRecorder();
+    _requestPermissions();
+  }
 
-    final result = _CryAnalysisResult(reason, time);
-    setState(() {
-      _latestResult = result;
-      _history.insert(0, result);
-    });
+  Future<void> _requestPermissions() async {
+    await Permission.microphone.request();
+    await Permission.storage.request();
+  }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Analysis Complete: $reason")),
+  Future<String> _getTempFilePath() async {
+    final dir = await getTemporaryDirectory();
+    return path.join(dir.path, 'recorded.wav');
+  }
+
+  Future<void> _toggleRecording() async {
+    if (_isRecording) {
+      await recorder.stopRecorder();
+      setState(() => _isRecording = false);
+
+      final filePath = await _getTempFilePath();
+      _lastRecordedFile = File(filePath);
+
+      await _analyzeCry(_lastRecordedFile!);
+    } else {
+      final path = await _getTempFilePath();
+      await recorder.startRecorder(
+        toFile: path,
+        codec: Codec.pcm16WAV,
+      );
+      setState(() => _isRecording = true);
+    }
+  }
+
+  Future<void> _pickAudioFile() async {
+    final result = await FilePicker.platform.pickFiles(type: FileType.audio);
+    if (result != null && result.files.single.path != null) {
+      final file = File(result.files.single.path!);
+      await _analyzeCry(file);
+    }
+  }
+
+  Future<void> _analyzeCry(File file) async {
+    final url = Uri.parse('http://127.0.0.1:8000/analyze-cry/');
+    final request = http.MultipartRequest('POST', url);
+    request.files.add(await http.MultipartFile.fromPath('file', file.path));
+
+    final response = await request.send();
+    final responseBody = await response.stream.bytesToString();
+
+    if (response.statusCode == 200) {
+      final decoded = jsonDecode(responseBody);
+      final predicted = decoded['predicted_label'];
+      final result = _CryAnalysisResult(predicted, DateTime.now());
+
+      setState(() {
+        _latestResult = result;
+        _history.insert(0, result);
+      });
+
+      
+  // Save to backend
+      await _saveAnalysisToBackend(predicted);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Prediction: $predicted")),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(" تحليل الصوت فشل")),
+      );
+    }
+  }
+
+  Future<void> _saveAnalysisToBackend(String reason) async {
+    final token = widget.authService.token;
+    final babyId = widget.authService.selectedBabyId;
+
+    if (token == null || babyId == null) {
+      print("Token or Baby ID is missing");
+      return;
+    }
+
+    final url = Uri.parse('http://127.0.0.1:3000/api/cry-analysis/$babyId');
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'reason': reason,
+      }),
     );
+
+    if (response.statusCode == 201) {
+      print("The analysis has been saved to the database!");
+    } else {
+      print("Failed to save analysis to database: ${response.body}");
+    }
+  }
+
+
+
+  @override
+  void dispose() {
+    recorder.closeRecorder();
+    super.dispose();
   }
 
   @override
@@ -56,11 +163,18 @@ class _BabySoundScreenState extends State<BabySoundScreen> {
         title: const Text('Cry Sound Analysis'),
         backgroundColor: primary,
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.upload_file),
+            tooltip: "اختيار تسجيل من الجهاز",
+            onPressed: _pickAudioFile,
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _simulateAnalysis,
-        icon: const Icon(Icons.mic),
-        label: const Text("Record Cry"),
+        onPressed: _toggleRecording,
+        icon: Icon(_isRecording ? Icons.stop : Icons.mic),
+        label: Text(_isRecording ? "Stop Recording" : "Record Cry"),
         backgroundColor: primary,
       ),
       body: Padding(
