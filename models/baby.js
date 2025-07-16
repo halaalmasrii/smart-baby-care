@@ -1,10 +1,7 @@
 const mongoose = require('mongoose');
 
 const babySchema = new mongoose.Schema({
-  //  babyId: {
-  //    type: mongoose.Schema.Types.ObjectId,
-  //     required: true
-  //   },
+
   name: {
     type: String,
     required: true
@@ -26,7 +23,7 @@ const babySchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  imageUrl: {
+  image: {
     type: String,
     required: false
   },
