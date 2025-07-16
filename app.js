@@ -10,7 +10,7 @@ const routes = require('./routes/routes');
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 51974;
 
 
 const storage = multer.diskStorage({
@@ -29,7 +29,7 @@ app.use(multer({
 
 
  app.use( cors({
-     origin: "http://localhost:3001",
+     origin: '*',
      credentials: true 
    })
  );
