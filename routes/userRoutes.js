@@ -3,20 +3,8 @@ const userController= require('../controller/userController');
 const { body } = require('express-validator');
 const isAuth = require("../middlewares/authMiddleware");
 const multer = require('multer');
-//const upload = require('../middlewares/uploadMiddleware'); 
+const upload = require('../middlewares/uploadMiddleware'); 
 const router = express.Router();
-
-
-// إعداد Multer لرفع الصور
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname);
-  }
-});
-const upload = multer({ storage });
 
 
 router.post('/register', [
@@ -31,7 +19,7 @@ router.post('/login', userController.loginUser);
 router.put('/:id' , isAuth , userController.updateUserProfile);
 router.put('/image/:id', isAuth , userController.updateUserImage);
 router.get('/check-auth', isAuth, userController.checkAuth);
-router.post('/baby', isAuth, upload.single('image'), userController.createBaby);
+router.post('/baby', isAuth, userController.createBaby);
 router.get('/babies', isAuth, userController.getUserBabies);
 router.delete('/baby/:id', isAuth, userController.deleteBaby);
 router.get('/baby', isAuth, userController.getUserBaby);
