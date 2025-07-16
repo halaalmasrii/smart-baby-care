@@ -129,23 +129,64 @@ const getUserById = async (req, res) => {
 ////////
 
 const updateUserProfile = async (req, res) => {
-  const userId = req.user._id; // تعديل: أخذنا الـ user من التوكن
-  const username = req.body.username;
+  const userId = req.user._id;
+  const { username, email, oldPassword, newPassword, confirmNewPassword } = req.body;
 
-  let user = await User.findById(userId);
-  if (!user) {
-    return res.status(404).json({ message: "User not found" });
+  try {
+    let user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // تحديث اليوزر نيم إذا تم إرساله
+    if (username) {
+      user.username = username;
+    }
+
+    // تحديث الإيميل إذا تم إرساله
+    if (email) {
+      user.email = email;
+    }
+
+    // التحقق من محاولة تغيير الباسوورد
+    if (oldPassword || newPassword || confirmNewPassword) {
+      // التأكد من إرسال جميع الحقول الثلاثة
+      if (!oldPassword || !newPassword || !confirmNewPassword) {
+        return res.status(400).json({
+          message: "Please provide old password, new password, and confirm new password",
+        });
+      }
+
+      // التحقق من صحة الباسوورد القديم
+      const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
+      if (!isPasswordValid) {
+        return res.status(400).json({ message: "Old password is incorrect" });
+      }
+
+      // التأكد من تطابق الباسوورد الجديد مع التأكيد
+      if (newPassword !== confirmNewPassword) {
+        return res.status(400).json({ message: "New password and confirm password do not match" });
+      }
+
+      // تشفير الباسوورد الجديد وتحديثه
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(newPassword, salt);
+    }
+
+    // حفظ التعديلات
+    await user.save();
+
+    // إزالة الباسوورد من الرد للحفاظ على الأمان
+    const userData = user.toObject();
+    delete userData.password;
+
+    return res.status(200).json({
+      message: "Profile updated successfully",
+      user: userData,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Server error", error: error.message });
   }
-
-  if (username) {
-    user.username = username;
-  }
-
-  user = await user.save();
-  return res.status(200).json({
-    message: "Profile updated successfully",
-    user,
-  });
 };
 
 
@@ -186,12 +227,21 @@ const updateUserImage = async (req, res) => {
 
 //////
 
+// controllers/babyController.js
 const createBaby = async (req, res) => {
+  const userId = req.user.id;
+  const { name, birthDate, gender, height, weight } = req.body;
 
-const userId = req.user.id;
-const { name, birthDate, gender, height, weight } = req.body;
-  //const imageUrl = req.file ? req.file.path : null;
+ const existBaby = await Baby.findOne({ name: name });
+    if (existBaby) {
+      return res.status(400).json({ message: "Baby already exist" });
+    }
 
+    let image;
+    if (req.files) {
+      image = req.files.image[0].path;
+    }
+   console.log(image);
   try {
     const newBaby = new Baby({
       name,
@@ -199,18 +249,34 @@ const { name, birthDate, gender, height, weight } = req.body;
       gender,
       height,
       weight,
-      //imageUrl,
+      image,
       user: userId
     });
 
     await newBaby.save();
-     await User.findByIdAndUpdate(userId, {
-     $push: { babyId: newBaby._id }  });
-    return res.status(201).json({ message: 'Baby added successfully', baby: newBaby });
+    await User.findByIdAndUpdate(userId, {
+      $push: { babyId: newBaby._id }
+    });
+
+    return res.status(201).json({ 
+      message: 'Baby added successfully', 
+      baby: newBaby ,
+      image
+    });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    // ✅ حذف الصورة إذا فشل الحفظ
+    if (req.file && req.file.path) {
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error("Failed to delete uploaded file:", err);
+      });
+    }
+
+    return res.status(500).json({ 
+      message: error.message || "Server error"
+    });
   }
 };
+
 
 const getUserBabies = async (req, res) => {
   const userId = req.user._id;
@@ -223,21 +289,40 @@ const getUserBabies = async (req, res) => {
   }
 };
 
+
+
 const deleteBaby = async (req, res) => {
-  const userId = req.user.id;
-  const babyId = req.params.id;
+  const babyId = req.params.id; // معرف الطفل من الـ URL
+  const userId = req.user._id;  // معرف المستخدم من التوكن
 
   try {
-    const baby = await Baby.findByIdAndDelete(babyId);
-    if (!baby) return res.status(404).json({ message: 'Baby not found' });
-
-    if (baby.imageUrl) {
-      fs.unlinkSync(baby.imageUrl); // حذف الصورة من النظام
+    // 1. البحث عن الطفل
+    const baby = await Baby.findById(babyId);
+    if (!baby) {
+      return res.status(404).json({ message: "Baby not found" });
     }
 
-    return res.status(200).json({ message: 'Baby deleted successfully' });
+    // 2. التأكد من أن المستخدم الحالي هو صاحب الطفل
+    if (baby.user.toString() !== userId.toString()) {
+      return res.status(403).json({ message: "You are not authorized to delete this baby" });
+    }
+
+    // 3. حذف الطفل من قاعدة البيانات
+    await Baby.findByIdAndDelete(babyId);
+
+    // 4. إزالة معرف الطفل من قائمة الأطفال الخاصة بالمستخدم
+    await User.findByIdAndUpdate(userId, {
+      $pull: { babyId: babyId },
+    });
+
+    return res.status(200).json({
+      message: "Baby deleted successfully",
+    });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    if (error.name === "CastError") {
+      return res.status(400).json({ message: "Invalid baby ID format" });
+    }
+    return res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
@@ -455,6 +540,7 @@ module.exports = {
   checkAuth,
   updateUserImage,
   createBaby,
+  deleteBaby,
   getUserBabies,
   deleteBaby,
   getUserBaby,
