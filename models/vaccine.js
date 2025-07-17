@@ -14,14 +14,18 @@ const vaccineSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
-
   description: {
     type: String
   },
   administered: {
     type: Boolean,
     default: false
-  }
+  },
+  user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
 });
 
 module.exports = mongoose.model('Vaccine', vaccineSchema);

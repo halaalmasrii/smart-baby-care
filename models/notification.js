@@ -14,11 +14,11 @@ const notificationSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  baby: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Baby',
-    required: true
-  },
+  babyId: {
+       type: mongoose.Schema.Types.ObjectId,
+        ref: 'Baby',
+        required: true
+      },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

@@ -13,10 +13,11 @@ const appointmentSchema = new mongoose.Schema({
     type: Date,
     required: false
   },
-times: {
-  type: [String], // مثل ["09:00", "21:00"]
-  default: []
+time: {
+  type: String,
+  required: true,
 },
+
   repeat: {
     type: String, // قيم محتملة: null, 'daily', 'weekly', 'monthly', إلخ
     default: null
