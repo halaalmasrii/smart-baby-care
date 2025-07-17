@@ -43,6 +43,8 @@ const updateBabyInfo = async (req, res) => {
 
 
 
+const { scheduleAppointmentNotification } = require("../services/notificationService"); // استيراد دالة الجدولة
+
 const createAppointment = async (req, res) => {
   const {
     title,
@@ -75,12 +77,21 @@ const createAppointment = async (req, res) => {
       babyId
     });
 
+    // حفظ الموعد أولاً
     await newAppointment.save();
+
+    // تحميل بيانات المستخدم (populate)
+    await newAppointment.populate('user');
+
+    // استدعاء جدولة الإشعار مع بيانات المستخدم كاملة
+    scheduleAppointmentNotification(newAppointment);
+
     return res.status(201).json({ message: 'Appointment created successfully', appointment: newAppointment });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 
 
