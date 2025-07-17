@@ -10,7 +10,25 @@ const routes = require('./routes/routes');
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 51974;
+
+
+// استدعاء sendNotification من ملف الخدمات
+const { sendNotification } = require("./services/notificationService");
+
+// مسار اختبار إرسال الإيميل
+app.get('/test-email', async (req, res) => {
+  try {
+    await sendNotification({
+      recipient: "hala.almasri.s.2002@gmail.com",  // غيّر هذا للإيميل اللي بدك تجرب عليه
+      subject: "Test Email",
+      message: "This is a test email to verify sending.",
+    });
+    res.send("Test email sent!");
+  } catch (error) {
+    res.status(500).send("Failed to send test email: " + error.message);
+  }
+});
 
 
 const storage = multer.diskStorage({
@@ -29,7 +47,7 @@ app.use(multer({
 
 
  app.use( cors({
-     origin: "http://localhost:3001",
+     origin: '*',
      credentials: true 
    })
  );
