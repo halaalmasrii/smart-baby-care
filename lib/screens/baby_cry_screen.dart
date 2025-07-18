@@ -8,7 +8,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'dart:convert';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:universal_html/html.dart' as html;
 import '../services/auth_service.dart';
+import 'dart:typed_data';
+
 
 class BabySoundScreen extends StatefulWidget {
   final AuthService authService;
@@ -23,6 +27,12 @@ class BabySoundScreen extends StatefulWidget {
 }
 
 
+class _CryAnalysisResult {
+  final String reason;
+  final DateTime time;
+  _CryAnalysisResult(this.reason, this.time);
+}
+
 class _BabySoundScreenState extends State<BabySoundScreen> {
   final List<_CryAnalysisResult> _history = [];
   final recorder = FlutterSoundRecorder();
@@ -30,13 +40,12 @@ class _BabySoundScreenState extends State<BabySoundScreen> {
   File? _lastRecordedFile;
 
   final Map<String, IconData> _reasonIcons = {
-  'belly pain': Icons.favorite,
-  'burping': Icons.air,
-  'cold_hot': Icons.ac_unit,
-  'discomfort': Icons.sentiment_dissatisfied,
-  'tired': Icons.bedtime,
-};
-
+    'belly pain': Icons.favorite,
+    'burping': Icons.air,
+    'cold_hot': Icons.ac_unit,
+    'discomfort': Icons.sentiment_dissatisfied,
+    'tired': Icons.bedtime,
+  };
 
   _CryAnalysisResult? _latestResult;
 
@@ -48,8 +57,10 @@ class _BabySoundScreenState extends State<BabySoundScreen> {
   }
 
   Future<void> _requestPermissions() async {
-    await Permission.microphone.request();
-    await Permission.storage.request();
+    if (!kIsWeb) {
+      await Permission.microphone.request();
+      await Permission.storage.request();
+    }
   }
 
   Future<String> _getTempFilePath() async {
@@ -76,15 +87,8 @@ class _BabySoundScreenState extends State<BabySoundScreen> {
     }
   }
 
-  Future<void> _pickAudioFile() async {
-    final result = await FilePicker.platform.pickFiles(type: FileType.audio);
-    if (result != null && result.files.single.path != null) {
-      final file = File(result.files.single.path!);
-      await _analyzeCry(file);
-    }
-  }
-
   Future<void> _analyzeCry(File file) async {
+  try {
     final url = Uri.parse('http://127.0.0.1:8000/analyze-cry/');
     final request = http.MultipartRequest('POST', url);
     request.files.add(await http.MultipartFile.fromPath('file', file.path));
@@ -97,36 +101,145 @@ class _BabySoundScreenState extends State<BabySoundScreen> {
       final predicted = decoded['predicted_label'];
       final result = _CryAnalysisResult(predicted, DateTime.now());
 
-      setState(() {
-        _latestResult = result;
-        _history.insert(0, result);
-      });
+      if (mounted) {
+        setState(() {
+          _latestResult = result;
+          _history.insert(0, result);
+        });
+      }
 
-      
-  // Save to backend
       await _saveAnalysisToBackend(predicted);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Prediction: $predicted")),
-      );
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("التنبؤ: $predicted")),
+        );
+      }
     } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("فشل في تحليل البكاء")),
+        );
+      }
+    }
+  } catch (e) {
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(" تحليل الصوت فشل")),
+        SnackBar(content: Text("حدث خطأ: ${e.toString()}")),
       );
     }
   }
+}
 
-  Future<void> _saveAnalysisToBackend(String reason) async {
-    final token = widget.authService.token;
-    final babyId = widget.authService.selectedBabyId;
-
-    if (token == null || babyId == null) {
-      print("Token or Baby ID is missing");
-      return;
+  Future<void> _pickAudioFile() async {
+    if (kIsWeb) {
+      _pickAudioFileWeb();
+    } else {
+      final result = await FilePicker.platform.pickFiles(type: FileType.audio);
+      if (result != null && result.files.single.path != null) {
+        final file = File(result.files.single.path!);
+        await _analyzeCry(file);
+      }
     }
+  }
 
-    final url = Uri.parse('http://127.0.0.1:3000/api/cry-analysis/$babyId');
+void _pickAudioFileWeb() {
+  final input = html.InputElement()..type = 'file'..accept = 'audio/*';
+  input.click();
+  input.onChange.listen((event) async {
+    try {
+      final file = input.files!.first;
+      final reader = html.FileReader();
+      
+      reader.onError.listen((error) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("خطأ في قراءة الملف")),
+          );
+        }
+        print("FileReader error: $error");
+      });
 
+      reader.readAsArrayBuffer(file);
+      await reader.onLoadEnd.first;
+
+      if (reader.result != null) {
+        final bytes = Uint8List.fromList(reader.result as List<int>);
+        await _analyzeCryWeb(bytes, file.name);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("حدث خطأ: ${e.toString()}")),
+        );
+      }
+      print("Upload error: $e");
+    }
+  });
+}
+
+Future<void> _analyzeCryWeb(Uint8List bytes, String fileName) async {
+  try {
+    final url = Uri.parse('http://127.0.0.1:8000/analyze-cry/');
+    final request = http.MultipartRequest('POST', url);
+    
+    request.files.add(http.MultipartFile.fromBytes(
+      'file',
+      bytes,
+      filename: fileName,
+    ));
+
+    final response = await request.send();
+    final responseBody = await response.stream.bytesToString();
+
+    if (response.statusCode == 200) {
+      final decoded = jsonDecode(responseBody);
+      final predicted = decoded['predicted_label'];
+      final result = _CryAnalysisResult(predicted, DateTime.now());
+
+      if (mounted) {
+        setState(() {
+          _latestResult = result;
+          _history.insert(0, result);
+        });
+      }
+
+      await _saveAnalysisToBackend(predicted);
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("التنبؤ: $predicted")),
+        );
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("فشل في التحليل: ${response.statusCode}")),
+        );
+      }
+    }
+  } catch (e) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("حدث خطأ: ${e.toString()}")),
+      );
+    }
+    print("Error details: $e"); // هذا سيطبع التفاصيل في الكونسول
+  }
+}
+
+
+Future<void> _saveAnalysisToBackend(String reason) async {
+  final token = widget.authService.token;
+  final babyId = widget.authService.selectedBabyId;
+
+  if (token == null || babyId == null) {
+    print("Token أو Baby ID غير متوفر");
+    return;
+  }
+
+  try {
+    final url = Uri.parse('http://localhost:3000/api/babies/cry-analysis/$babyId');
     final response = await http.post(
       url,
       headers: {
@@ -135,17 +248,21 @@ class _BabySoundScreenState extends State<BabySoundScreen> {
       },
       body: jsonEncode({
         'reason': reason,
+        'timestamp': DateTime.now().toIso8601String(),
       }),
     );
 
     if (response.statusCode == 201) {
-      print("The analysis has been saved to the database!");
+      print("تم حفظ التحليل في قاعدة البيانات");
     } else {
-      print("Failed to save analysis to database: ${response.body}");
+      print("فشل في حفظ التحليل: ${response.body}");
+      throw Exception('Failed to save analysis');
     }
+  } catch (e) {
+    print('Error saving to backend: $e');
+    rethrow;
   }
-
-
+}
 
   @override
   void dispose() {
@@ -160,13 +277,12 @@ class _BabySoundScreenState extends State<BabySoundScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cry Sound Analysis'),
+        title: const Text('تحليل بكاء الطفل'),
         backgroundColor: primary,
-        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.upload_file),
-            tooltip: "اختيار تسجيل من الجهاز",
+            tooltip: "اختيار تسجيل صوتي",
             onPressed: _pickAudioFile,
           ),
         ],
@@ -174,7 +290,7 @@ class _BabySoundScreenState extends State<BabySoundScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _toggleRecording,
         icon: Icon(_isRecording ? Icons.stop : Icons.mic),
-        label: Text(_isRecording ? "Stop Recording" : "Record Cry"),
+        label: Text(_isRecording ? "إيقاف التسجيل" : "تسجيل"),
         backgroundColor: primary,
       ),
       body: Padding(
@@ -198,7 +314,7 @@ class _BabySoundScreenState extends State<BabySoundScreen> {
                     const SizedBox(width: 16),
                     Expanded(
                       child: Text(
-                        "Latest Analysis: ${_latestResult!.reason}",
+                        "التحليل الأخير: ${_latestResult!.reason}",
                         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -210,14 +326,14 @@ class _BabySoundScreenState extends State<BabySoundScreen> {
             const Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'History',
+                'التاريخ',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 8),
             Expanded(
               child: _history.isEmpty
-                  ? const Center(child: Text("No analysis history yet."))
+                  ? const Center(child: Text("لا يوجد تحليل سابق"))
                   : ListView.builder(
                       itemCount: _history.length,
                       itemBuilder: (context, index) {
@@ -240,11 +356,4 @@ class _BabySoundScreenState extends State<BabySoundScreen> {
       ),
     );
   }
-}
-
-class _CryAnalysisResult {
-  final String reason;
-  final DateTime time;
-
-  _CryAnalysisResult(this.reason, this.time);
 }
