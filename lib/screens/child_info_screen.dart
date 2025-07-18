@@ -92,7 +92,7 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
 
           // تنفيذ callback لتحديث البيانات في Dashboard
           if (widget.onSuccessCallback != null) {
-            widget.onSuccessCallback!(); // ← سيُجدد البيانات في الشاشة الأم
+            widget.onSuccessCallback!(); //  سيُجدد البيانات في الشاشة الأم
           }
 
           // أو التنقل إلى Dashboard مع تحديث البيانات
