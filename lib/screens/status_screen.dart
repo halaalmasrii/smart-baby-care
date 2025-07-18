@@ -76,7 +76,7 @@ class _StatusScreenState extends State<StatusScreen> {
                   ),
                   borderData: FlBorderData(show: true),
                   lineBarsData: [
-                    // ✅ رسم خطوط SD (-3 إلى +3)
+                    // رسم خطوط SD (-3 إلى +3)
                     LineChartBarData(
                       spots: getZScoreCurve(growthData!['gender'], x),
                       isCurved: true,
@@ -85,7 +85,7 @@ class _StatusScreenState extends State<StatusScreen> {
                       dotData: FlDotData(show: false),
                     ),
 
-                    // ✅ نقطة الطفل
+                    // نقطة الطفل
                     LineChartBarData(
                       spots: [FlSpot(x, y)],
                       color: Colors.blueAccent,
@@ -105,21 +105,21 @@ class _StatusScreenState extends State<StatusScreen> {
               ],
             ),
             const SizedBox(height: 8),
-            Text("الحالة: $status", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+            Text("status: $status", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
           ],
         ),
       ),
     );
   }
 
-  // ✅ وظيفة رسم خطوط Z-Score بناءً على الجنس والطول أو العمر
+  // وظيفة رسم خطوط Z-Score بناءً على الجنس والطول أو العمر
   List<FlSpot> getZScoreCurve(String gender, double xValue) {
-    // 📌 هنا يمكنك استخدام بياناتك من Excel لرسم المنحنى
+    // هنا يمكنك استخدام بياناتك من Excel لرسم المنحنى
     // مثال: إن كان x هو العمر بالشهور، استخدم ملفات LHFA/WFA
     // وإن كان x هو الطول، استخدم ملفات WFL
 
     if (xValue <= 24) {
-      // 📊 مثال: WFL (وزن حسب الطول)
+      // مثال: WFL (وزن حسب الطول)
       if (gender == 'male') {
         return [
           FlSpot(80, 10),
@@ -149,33 +149,33 @@ class _StatusScreenState extends State<StatusScreen> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : growthData == null
-              ? const Center(child: Text("لا يوجد بيانات"))
+              ? const Center(child: Text("There is no data"))
               : SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
                       buildChart(
-                        "الطول بالنسبة للعمر (LHFA)",
+                        "Height for age (LHFA)",
                         (growthData!['ageInMonths'] as num).toDouble(),
                         (growthData!['height'] as num).toDouble(),
-                        "العمر (أشهر)",
-                        "الطول (سم)",
+                        "Age (Month)",
+                        "Heghit (CM)",
                         growthData!['lhfa']['status'],
                       ),
                       buildChart(
-                        "الوزن بالنسبة للعمر (WFA)",
+                        "weight for age (WFA)",
                         (growthData!['ageInMonths'] as num).toDouble(),
                         (growthData!['weight'] as num).toDouble(),
-                        "العمر (أشهر)",
-                        "الوزن (كغ)",
+                        "Age (Month)",
+                        "Weight (Kg)",
                         growthData!['wfa']['status'],
                       ),
                       buildChart(
-                        "الوزن بالنسبة للطول (WFL)",
+                        "Weight to height (WFL)",
                         (growthData!['height'] as num).toDouble(),
                         (growthData!['weight'] as num).toDouble(),
-                        "الطول (سم)",
-                        "الوزن (كغ)",
+                        "Height (Cm)",
+                        "Weight (Kg)",
                         growthData!['wfl']['status'],
                       ),
                     ],
