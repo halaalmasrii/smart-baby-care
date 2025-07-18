@@ -53,6 +53,12 @@ class AuthService with ChangeNotifier {
       _isLoggedIn = false;
     }
   }
+//لتحديث الواجهة
+  Future<void> setSelectedBabyId(String id) async {
+  selectedBabyId = id;
+  notifyListeners();
+}
+
 
   // تسجيل حساب جديد ثم تسجيل دخول تلقائي
   Future<bool> registerUser({

@@ -1,31 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import '../services/auth_service.dart';
 
-class StatusScreen extends StatelessWidget {
-  StatusScreen({Key? key}) : super(key: key);
+class StatusScreen extends StatefulWidget {
+  const StatusScreen({Key? key}) : super(key: key);
 
-  List<FlSpot> heightWeightData = const [
-    FlSpot(68, 7.5),
-    FlSpot(70, 8.1),
-    FlSpot(72, 8.9),
-    FlSpot(74, 9.4),
-  ];
+  @override
+  State<StatusScreen> createState() => _StatusScreenState();
+}
 
-  List<FlSpot> heightAgeData = const [
-    FlSpot(8, 68),
-    FlSpot(12, 70),
-    FlSpot(16, 72),
-    FlSpot(20, 74),
-  ];
+class _StatusScreenState extends State<StatusScreen> {
+  Map<String, dynamic>? growthData;
+  bool isLoading = true;
 
-  List<FlSpot> weightAgeData = const [
-    FlSpot(8, 7.5),
-    FlSpot(12, 8.1),
-    FlSpot(16, 8.9),
-    FlSpot(20, 9.4),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    fetchGrowthData();
+  }
 
-  Widget buildChart(String title, List<FlSpot> data, String xLabel, String yLabel) {
+  Future<void> fetchGrowthData() async {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final token = authService.token;
+    final babyId = authService.selectedBabyId;
+
+    if (token == null || babyId == null) return;
+
+    final uri = Uri.parse('http://localhost:3000/api/babies/growth-report/$babyId');
+
+    try {
+      final response = await http.get(
+        uri,
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          growthData = jsonDecode(response.body);
+          isLoading = false;
+        });
+      } else {
+        print("Error fetching growth report: ${response.body}");
+      }
+    } catch (e) {
+      print("Exception: $e");
+    }
+  }
+
+  Widget buildChart(String title, double x, double y, String xLabel, String yLabel, String status) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 12),
       child: Padding(
@@ -46,12 +71,12 @@ class StatusScreen extends StatelessWidget {
                   borderData: FlBorderData(show: true),
                   lineBarsData: [
                     LineChartBarData(
-                      spots: data,
+                      spots: [FlSpot(x, y)],
                       isCurved: true,
                       color: Colors.blueAccent,
                       barWidth: 3,
                       dotData: FlDotData(show: true),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -63,7 +88,9 @@ class StatusScreen extends StatelessWidget {
                 Text("X: $xLabel", style: const TextStyle(fontSize: 12)),
                 Text("Y: $yLabel", style: const TextStyle(fontSize: 12)),
               ],
-            )
+            ),
+            const SizedBox(height: 8),
+            Text("الحالة: $status", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
           ],
         ),
       ),
@@ -73,17 +100,42 @@ class StatusScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Baby Status")),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            buildChart("Height vs Weight", heightWeightData, "Height (cm)", "Weight (kg)"),
-            buildChart("Height vs Age", heightAgeData, "Age (weeks)", "Height (cm)"),
-            buildChart("Weight vs Age", weightAgeData, "Age (weeks)", "Weight (kg)"),
-          ],
-        ),
-      ),
+      appBar: AppBar(title: const Text("Growth Report")),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : growthData == null
+              ? const Center(child: Text("لا يوجد بيانات"))
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      buildChart(
+                        "الطول بالنسبة للعمر (LHFA)",
+                        (growthData!['ageInMonths'] as num).toDouble(),
+                        (growthData!['height'] as num).toDouble(),
+                        "العمر (أشهر)",
+                        "الطول (سم)",
+                        growthData!['lhfa']['status'],
+                      ),
+                      buildChart(
+                        "الوزن بالنسبة للعمر (WFA)",
+                        (growthData!['ageInMonths'] as num).toDouble(),
+                        (growthData!['weight'] as num).toDouble(),
+                        "العمر (أشهر)",
+                        "الوزن (كغ)",
+                        growthData!['wfa']['status'],
+                      ),
+                      buildChart(
+                        "الوزن بالنسبة للطول (WFL)",
+                        (growthData!['height'] as num).toDouble(),
+                        (growthData!['weight'] as num).toDouble(),
+                        "الطول (سم)",
+                        "الوزن (كغ)",
+                        growthData!['wfl']['status'],
+                      ),
+                    ],
+                  ),
+                ),
     );
   }
 }

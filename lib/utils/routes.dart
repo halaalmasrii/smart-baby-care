@@ -57,7 +57,7 @@ class AppRoutes {
     childInfo: (context) => const ChildInfoScreen(),
     signup: (context) => const SignUpScreen(),
     sleepTimer: (context) => const SleepTimerScreen(),
-    status: (context) => StatusScreen(),
+    status: (context) => StatusScreen(),  
     vaccines: (context) => const VaccinationScheduleScreen(),
     schedule: (context) => const FeedingScheduleScreen(),
     sleepArchive: (context) => const SleepArchiveScreen(),
