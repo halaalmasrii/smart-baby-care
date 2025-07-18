@@ -25,8 +25,6 @@ class _FeedingScheduleScreenState extends State<FeedingScheduleScreen> {
   }
 
   Future<void> fetchFeedingsFromServer() async {
-    setState(() => isLoading = true);
-
     final authService = Provider.of<AuthService>(context, listen: false);
     final token = authService.token;
     final babyId = authService.selectedBabyId;
@@ -40,9 +38,10 @@ class _FeedingScheduleScreenState extends State<FeedingScheduleScreen> {
     final uri = Uri.parse("http://localhost:3000/api/babies/feedings/$babyId");
 
     try {
-      final response = await http.get(uri, headers: {
-        "Authorization": "Bearer $token",
-      });
+      final response = await http.get(
+        uri,
+        headers: {"Authorization": "Bearer $token"},
+      );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
