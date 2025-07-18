@@ -44,9 +44,15 @@ class _StatusScreenState extends State<StatusScreen> {
         });
       } else {
         print("Error fetching growth report: ${response.body}");
+        setState(() {
+          isLoading = false;
+        });
       }
     } catch (e) {
       print("Exception: $e");
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -70,9 +76,18 @@ class _StatusScreenState extends State<StatusScreen> {
                   ),
                   borderData: FlBorderData(show: true),
                   lineBarsData: [
+                    // ✅ رسم خطوط SD (-3 إلى +3)
+                    LineChartBarData(
+                      spots: getZScoreCurve(growthData!['gender'], x),
+                      isCurved: true,
+                      color: Colors.green,
+                      barWidth: 2,
+                      dotData: FlDotData(show: false),
+                    ),
+
+                    // ✅ نقطة الطفل
                     LineChartBarData(
                       spots: [FlSpot(x, y)],
-                      isCurved: true,
                       color: Colors.blueAccent,
                       barWidth: 3,
                       dotData: FlDotData(show: true),
@@ -85,8 +100,8 @@ class _StatusScreenState extends State<StatusScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("X: $xLabel", style: const TextStyle(fontSize: 12)),
-                Text("Y: $yLabel", style: const TextStyle(fontSize: 12)),
+                Text("X: $xLabel", style: TextStyle(fontSize: 12)),
+                Text("Y: $yLabel", style: TextStyle(fontSize: 12)),
               ],
             ),
             const SizedBox(height: 8),
@@ -95,6 +110,36 @@ class _StatusScreenState extends State<StatusScreen> {
         ),
       ),
     );
+  }
+
+  // ✅ وظيفة رسم خطوط Z-Score بناءً على الجنس والطول أو العمر
+  List<FlSpot> getZScoreCurve(String gender, double xValue) {
+    // 📌 هنا يمكنك استخدام بياناتك من Excel لرسم المنحنى
+    // مثال: إن كان x هو العمر بالشهور، استخدم ملفات LHFA/WFA
+    // وإن كان x هو الطول، استخدم ملفات WFL
+
+    if (xValue <= 24) {
+      // 📊 مثال: WFL (وزن حسب الطول)
+      if (gender == 'male') {
+        return [
+          FlSpot(80, 10),
+          FlSpot(85, 11.5),
+          FlSpot(90, 13),
+          FlSpot(95, 14.5),
+          FlSpot(100, 16),
+        ];
+      } else {
+        return [
+          FlSpot(80, 9.8),
+          FlSpot(85, 11.2),
+          FlSpot(90, 12.8),
+          FlSpot(95, 14.3),
+          FlSpot(100, 15.8),
+        ];
+      }
+    } else {
+      return [];
+    }
   }
 
   @override
