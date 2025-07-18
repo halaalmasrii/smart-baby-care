@@ -118,14 +118,14 @@ class _BabySoundScreenState extends State<BabySoundScreen> {
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("فشل في تحليل البكاء")),
+          const SnackBar(content: Text("Failed to analyze crying")),
         );
       }
     }
   } catch (e) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("حدث خطأ: ${e.toString()}")),
+        SnackBar(content: Text("An error occurred: ${e.toString()}")),
       );
     }
   }
@@ -154,7 +154,7 @@ void _pickAudioFileWeb() {
       reader.onError.listen((error) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("خطأ في قراءة الملف")),
+            SnackBar(content: Text("File read error")),
           );
         }
         print("FileReader error: $error");
@@ -170,7 +170,7 @@ void _pickAudioFileWeb() {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("حدث خطأ: ${e.toString()}")),
+          SnackBar(content: Text("An error occurred: ${e.toString()}")),
         );
       }
       print("Upload error: $e");
@@ -208,13 +208,13 @@ Future<void> _analyzeCryWeb(Uint8List bytes, String fileName) async {
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("التنبؤ: $predicted")),
+          SnackBar(content: Text("The Prediction is: $predicted")),
         );
       }
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("فشل في التحليل: ${response.statusCode}")),
+          SnackBar(content: Text("Analysis failure: ${response.statusCode}")),
         );
       }
     }
@@ -224,7 +224,7 @@ Future<void> _analyzeCryWeb(Uint8List bytes, String fileName) async {
         SnackBar(content: Text("حدث خطأ: ${e.toString()}")),
       );
     }
-    print("Error details: $e"); // هذا سيطبع التفاصيل في الكونسول
+    print("Error details: $e"); //  سيطبع التفاصيل في الكونسول
   }
 }
 
@@ -234,7 +234,7 @@ Future<void> _saveAnalysisToBackend(String reason) async {
   final babyId = widget.authService.selectedBabyId;
 
   if (token == null || babyId == null) {
-    print("Token أو Baby ID غير متوفر");
+    print("Token أو Baby ID un avilable");
     return;
   }
 
