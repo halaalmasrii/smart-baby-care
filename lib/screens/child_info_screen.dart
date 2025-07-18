@@ -7,10 +7,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../services/auth_service.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/foundation.dart'; // ضروري لـ kIsWeb
+import 'package:flutter/foundation.dart';
 
 class ChildInfoScreen extends StatefulWidget {
-  final VoidCallback? onSuccessCallback; // لإضافة طفل جديد من الإعدادات
+  final VoidCallback? onSuccessCallback; // سيستخدم لتحديث البيانات فور الإضافة
 
   const ChildInfoScreen({Key? key, this.onSuccessCallback}) : super(key: key);
 
@@ -39,7 +39,6 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
 
   void _submit() async {
     if (_formKey.currentState!.validate()) {
-      // ✅ فحص تاريخ الميلاد
       if (_birthDate == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Please select a birth date')),
@@ -57,7 +56,6 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
       final authService = Provider.of<AuthService>(context, listen: false);
       final token = authService.token;
 
-      // ✅ فحص وجود التوكن
       if (token == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Please log in again to continue.")),
@@ -86,12 +84,22 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
         );
 
         if (response.statusCode == 201) {
-          // ✅ استخدم onSuccessCallback إذا تم توفيرها
+          final babyData = jsonDecode(response.body)['baby'];
+
+          // تحديث البيانات في Provider
+          await Provider.of<AuthService>(context, listen: false)
+              .setSelectedBabyId(babyData['_id']);
+
+          // تنفيذ callback لتحديث البيانات في Dashboard
           if (widget.onSuccessCallback != null) {
-            widget.onSuccessCallback!();
-          } else {
-            Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+            widget.onSuccessCallback!(); // ← سيُجدد البيانات في الشاشة الأم
           }
+
+          // أو التنقل إلى Dashboard مع تحديث البيانات
+          Navigator.pushReplacementNamed(
+            context,
+            AppRoutes.dashboard,
+          );
         } else {
           final errorMsg = jsonDecode(response.body)['message'] ?? 'Failed to add baby';
           ScaffoldMessenger.of(context).showSnackBar(
@@ -105,6 +113,14 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
         );
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _heightController.dispose();
+    _weightController.dispose();
+    super.dispose();
   }
 
   @override
@@ -123,16 +139,13 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
           key: _formKey,
           child: ListView(
             children: [
-              // ✅ إخفاء الصورة في الويب
               if (!kIsWeb)
                 GestureDetector(
                   onTap: _pickImage,
                   child: CircleAvatar(
                     radius: 50,
                     backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
-                    child: _imageFile == null
-                        ? const Icon(Icons.add_a_photo, size: 32)
-                        : null,
+                    child: _imageFile == null ? const Icon(Icons.add_a_photo, size: 32) : null,
                   ),
                 ),
               if (!kIsWeb) const SizedBox(height: 16),
@@ -163,7 +176,9 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
                     firstDate: DateTime(2015),
                     lastDate: DateTime.now(),
                   );
-                  if (date != null) setState(() => _birthDate = date);
+                  if (date != null) {
+                    setState(() => _birthDate = date);
+                  }
                 },
               ),
               const SizedBox(height: 12),
