@@ -15,7 +15,8 @@ class FeedingScheduleScreen extends StatefulWidget {
 }
 
 class _FeedingScheduleScreenState extends State<FeedingScheduleScreen> {
-  final List<DateTime> feedings = [];
+  List<DateTime> feedings = [];
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -24,12 +25,15 @@ class _FeedingScheduleScreenState extends State<FeedingScheduleScreen> {
   }
 
   Future<void> fetchFeedingsFromServer() async {
+    setState(() => isLoading = true);
+
     final authService = Provider.of<AuthService>(context, listen: false);
     final token = authService.token;
     final babyId = authService.selectedBabyId;
 
     if (token == null || babyId == null) {
-      print(" Token or Baby ID is missing");
+      print("Token or Baby ID is missing");
+      setState(() => isLoading = false);
       return;
     }
 
@@ -45,14 +49,20 @@ class _FeedingScheduleScreenState extends State<FeedingScheduleScreen> {
         final List<dynamic> feedingsJson = data['feedings'] ?? [];
 
         setState(() {
-          feedings.clear();
-          feedings.addAll(feedingsJson.map((f) => DateTime.parse(f['time'])));
+          feedings = feedingsJson
+              .map((f) => DateTime.tryParse(f['time']))
+              .where((dt) => dt != null)
+              .cast<DateTime>()
+              .toList();
+          isLoading = false;
         });
       } else {
         print("Failed to fetch feedings: ${response.body}");
+        setState(() => isLoading = false);
       }
     } catch (e) {
       print("Error fetching feedings: $e");
+      setState(() => isLoading = false);
     }
   }
 
@@ -63,9 +73,7 @@ class _FeedingScheduleScreenState extends State<FeedingScheduleScreen> {
     final success = await sendFeedingToServer(now);
 
     if (success) {
-      setState(() {
-        feedings.insert(0, now);
-      });
+      await fetchFeedingsFromServer(); // ✅ تحديث الواجهة بعد الحفظ
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Feeding time added')),
@@ -80,49 +88,49 @@ class _FeedingScheduleScreenState extends State<FeedingScheduleScreen> {
   }
 
   Future<bool> sendFeedingToServer(DateTime now) async {
-  final authService = Provider.of<AuthService>(context, listen: false);
-  final token = authService.token;
-  final babyId = authService.selectedBabyId;
-  final userId = authService.userId;
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final token = authService.token;
+    final babyId = authService.selectedBabyId;
+    final userId = authService.userId;
 
-  if (token == null || babyId == null || userId == null) {
-    print("Missing auth data");
-    return false;
-  }
-
-  final uri = Uri.parse("http://localhost:3000/api/babies/feedings/$babyId");
-
-  final body = {
-    "user": userId,
-    "title": "Feeding Reminder",
-    "time": now.toIso8601String(),
-    "recurrence": "every_3_hours",
-    "notifyAtTime": true,
-    "lastFeeding": now.toIso8601String(),
-  };
-
-  try {
-    final response = await http.post(
-      uri,
-      headers: {
-        "Authorization": "Bearer $token",
-        "Content-Type": "application/json",
-      },
-      body: jsonEncode(body),
-    );
-
-    if (response.statusCode == 201) {
-      print("Feeding saved successfully");
-      return true;
-    } else {
-      print("Failed to save feeding: ${response.body}");
+    if (token == null || babyId == null || userId == null) {
+      print("Missing auth data");
       return false;
     }
-  } catch (e) {
-    print("Exception: $e");
-    return false;
+
+    final uri = Uri.parse("http://localhost:3000/api/babies/feedings/$babyId");
+
+    final body = {
+      "user": userId,
+      "title": "Feeding Reminder",
+      "time": now.toIso8601String(),
+      "recurrence": "every_3_hours",
+      "notifyAtTime": true,
+      "lastFeeding": now.toIso8601String(),
+    };
+
+    try {
+      final response = await http.post(
+        uri,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 201) {
+        print("Feeding saved successfully");
+        return true;
+      } else {
+        print("Failed to save feeding: ${response.body}");
+        return false;
+      }
+    } catch (e) {
+      print("Exception: $e");
+      return false;
+    }
   }
-}
 
   Future<void> scheduleFeedingReminder(DateTime reminderTime, DateTime feedingTime) async {
     final prefs = await SharedPreferences.getInstance();
@@ -167,28 +175,38 @@ class _FeedingScheduleScreenState extends State<FeedingScheduleScreen> {
         icon: const Icon(Icons.add),
         label: const Text('Add Feeding'),
       ),
-      body: feedings.isEmpty
-          ? const Center(
-              child: Text(
-                'No feedings added yet.',
-                style: TextStyle(fontSize: 16),
-              ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: feedings.length,
-              itemBuilder: (context, index) {
-                final time = feedings[index];
-                return Card(
-                  elevation: 2,
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  child: ListTile(
-                    leading: const Icon(Icons.baby_changing_station),
-                    title: Text(
-                      'Feeding at ${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
-                    ),
-                    subtitle: Text('${time.day}/${time.month}/${time.year}'),
-                  ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Builder(
+              builder: (context) {
+                final todayFeedings = feedings.where((feeding) {
+                  final now = DateTime.now();
+                  return feeding.year == now.year &&
+                      feeding.month == now.month &&
+                      feeding.day == now.day;
+                }).toList();
+
+                if (todayFeedings.isEmpty) {
+                  return const Center(child: Text('No feedings for today.'));
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: todayFeedings.length,
+                  itemBuilder: (context, index) {
+                    final time = todayFeedings[index];
+                    return Card(
+                      elevation: 2,
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      child: ListTile(
+                        leading: const Icon(Icons.baby_changing_station),
+                        title: Text(
+                          'Feeding at ${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
+                        ),
+                        subtitle: Text('${time.day}/${time.month}/${time.year}'),
+                      ),
+                    );
+                  },
                 );
               },
             ),
