@@ -24,8 +24,15 @@ class _SleepArchiveScreenState extends State<SleepArchiveScreen> {
   Future<void> fetchArchivedSleepSessions() async {
     final authService = Provider.of<AuthService>(context, listen: false);
     final token = authService.token;
+    final babyId = authService.selectedBabyId;
 
-    final uri = Uri.parse('http://localhost:3000/api/users/sleep');
+    if (babyId == null || token == null) {
+      setState(() => isLoading = false);
+      print("babyId or token is null");
+      return;
+    }
+
+    final uri = Uri.parse('http://localhost:3000/api/babies/sleep/baby/$babyId');
 
     try {
       final response = await http.get(
