@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
 import '../widgets/stats_card.dart';
 import '../widgets/custom_nav_bar.dart';
 import '../utils/routes.dart';
@@ -23,9 +24,8 @@ class _DashboardScreenState extends State<DashboardScreen>
   List<Map<String, dynamic>> babies = [];
   int selectedBabyIndex = 0;
 
-  String totalSleep = '--'; 
+  String totalSleep = '--';
   String todayFeedingCount = '--';
-
 
   @override
   void initState() {
@@ -34,14 +34,21 @@ class _DashboardScreenState extends State<DashboardScreen>
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-    _controller.forward();
 
-    fetchBabies();
-    fetchTodayStats(); // استدعاء جلب الإحصائيات
-    fetchTodayFeedingCount(); // استدعاء عدد الرضاعات اليوم
+    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
+    CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+  );
+
+    _controller.forward(); 
+
+    _initData(); 
+  }
+
+  /// جلب قائمة الأطفال ثم يستدعي إحصاءات اليوم
+  Future<void> _initData() async {
+    await fetchBabies();           
+    await fetchTodayStats();       
+    await fetchTodayFeedingCount();  
   }
 
   Future<void> fetchBabies() async {
@@ -52,66 +59,66 @@ class _DashboardScreenState extends State<DashboardScreen>
     try {
       final response = await http.get(
         uri,
-        headers: {
-          "Authorization": "Bearer $token",
-        },
+        headers: {"Authorization": "Bearer $token"},
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final babyList = List<Map<String, dynamic>>.from(data['babies']);
+
         setState(() {
           babies = babyList;
           selectedBabyIndex = 0;
         });
+
         if (babyList.isNotEmpty) {
-        authService.selectedBabyId = babyList[0]['_id'];
-        print(" Baby selected automatically: ${authService.selectedBabyId}");
-      }
+          authService.selectedBabyId = babyList[0]['_id'];
+          debugPrint("Baby selected automatically: ${authService.selectedBabyId}");
+        }
       } else {
-        print("Failed to fetch babies");
+        debugPrint("Failed to fetch babies");
       }
     } catch (e) {
-      print("Error: $e");
+      debugPrint("Error fetching babies: $e");
     }
   }
-// تابع جلب عدد مرات الرضاعة
+
   Future<void> fetchTodayFeedingCount() async {
-  final authService = Provider.of<AuthService>(context, listen: false);
-  final token = authService.token;
-  final babyId = authService.selectedBabyId;
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final token = authService.token;
+    final babyId = authService.selectedBabyId;
 
-  if (token == null || babyId == null) return;
+    if (token == null || babyId == null) return; // أمان
 
-  final uri = Uri.parse('http://localhost:3000/api/status/feeding/$babyId');
+    final uri = Uri.parse('http://localhost:3000/api/babies/status/feeding/$babyId');
 
+    try {
+      final response = await http.get(
+        uri,
+        headers: {"Authorization": "Bearer $token"},
+      );
 
-  try {
-    final response = await http.get(
-      uri,
-      headers: {"Authorization": "Bearer $token"},
-    );
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      setState(() {
-        todayFeedingCount = '${data['count']} times';
-      });
-    } else {
-      print("Failed to fetch feeding stats: ${response.body}");
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          todayFeedingCount = '${data['count']} times';
+        });
+      } else {
+        debugPrint("Failed to fetch feeding stats: ${response.body}");
+      }
+    } catch (e) {
+      debugPrint("Error fetching feeding stats: $e");
     }
-  } catch (e) {
-    print("Error fetching feeding stats: $e");
   }
-}
 
-
-  // تابع جلب عدد ساعات النوم من الباكند
   Future<void> fetchTodayStats() async {
     final authService = Provider.of<AuthService>(context, listen: false);
     final token = authService.token;
+    final babyId = authService.selectedBabyId;
 
-    final uri = Uri.parse('http://localhost:3000/api/users/status/today');
+    if (token == null || babyId == null) return; // أمان
+
+    final uri = Uri.parse('http://localhost:3000/api/babies/status/sleep/$babyId');
 
     try {
       final response = await http.get(
@@ -128,12 +135,19 @@ class _DashboardScreenState extends State<DashboardScreen>
           totalSleep = '$hours hrs';
         });
       } else {
-        print("Failed to fetch stats");
+        debugPrint("Failed to fetch stats");
       }
     } catch (e) {
-      print("Error fetching stats: $e");
+      debugPrint("Error fetching stats: $e");
     }
   }
+
+  void updateSleepStats(int totalSleepMinutes) {
+  setState(() {
+    final hours = (totalSleepMinutes / 60).toStringAsFixed(1);
+    totalSleep = '$hours hrs';
+  });
+}
 
   @override
   void dispose() {
@@ -153,8 +167,10 @@ class _DashboardScreenState extends State<DashboardScreen>
         ? "http://localhost:3000/${selectedBaby?['imageUrl']}"
         : 'assets/default_baby.png';
 
-    final birthDate = selectedBaby != null ? DateTime.parse(selectedBaby['birthDate']) : null;
-    final ageInWeeks = birthDate != null ? DateTime.now().difference(birthDate).inDays ~/ 7 : 0;
+    final birthDate =
+        selectedBaby != null ? DateTime.parse(selectedBaby['birthDate']) : null;
+    final ageInWeeks =
+        birthDate != null ? DateTime.now().difference(birthDate).inDays ~/ 7 : 0;
 
     return Scaffold(
       appBar: PreferredSize(
@@ -178,29 +194,34 @@ class _DashboardScreenState extends State<DashboardScreen>
                   DropdownButton<String>(
                     value: babyName,
                     dropdownColor: color,
-                    style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
                     iconEnabledColor: Colors.white,
                     underline: const SizedBox(),
                     items: babies.map<DropdownMenuItem<String>>((baby) {
-                      final babyName = baby['name']?.toString() ?? 'Unnamed';
                       return DropdownMenuItem<String>(
-                        value: babyName,
+                        value: baby['name']?.toString() ?? 'Unnamed',
                         child: Text(
-                          babyName,
+                          baby['name']?.toString() ?? 'Unnamed',
                           style: const TextStyle(color: Colors.white),
                         ),
                       );
                     }).toList(),
-                    onChanged: (value) {
+                    onChanged: (value) async {
                       final index = babies.indexWhere((b) => b['name'] == value);
                       if (index != -1) {
-                        setState(() {
-                          selectedBabyIndex = index;
-                        });
-                        //  تحديث selectedBabyId عند اختيار طفل جديد
-                        final authService = Provider.of<AuthService>(context, listen: false);
+                        setState(() => selectedBabyIndex = index);
+
+                        final authService =
+                            Provider.of<AuthService>(context, listen: false);
                         authService.selectedBabyId = babies[index]['_id'];
-                        print(" Switched to baby: ${authService.selectedBabyId}");
+                        debugPrint("Switched to baby: ${authService.selectedBabyId}");
+
+                        // حدث الإحصاءات للطفل الجديد
+                        await fetchTodayStats();
+                        await fetchTodayFeedingCount();
                       }
                     },
                   ),
@@ -216,10 +237,8 @@ class _DashboardScreenState extends State<DashboardScreen>
             IconButton(
               icon: const Icon(Icons.color_lens, color: Colors.white),
               tooltip: "Toggle Theme",
-              onPressed: () {
-                themeProvider.toggleTheme();
-              },
-            )
+              onPressed: () => themeProvider.toggleTheme(),
+            ),
           ],
         ),
       ),
@@ -229,7 +248,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           padding: const EdgeInsets.all(16),
           children: [
             StatsCard(
-              sleep: totalSleep, // الربط مع القيمة الديناميكية
+              sleep: totalSleep,
               feeding: todayFeedingCount,
               height: selectedBaby?['height']?.toString() ?? '--',
               weight: selectedBaby?['weight']?.toString() ?? '--',
@@ -239,29 +258,25 @@ class _DashboardScreenState extends State<DashboardScreen>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _featureBox(context, Icons.bedtime, "Sleep", () {
-                  Navigator.pushNamed(context, AppRoutes.sleepTimer);
-                }),
-                _featureBox(context, Icons.local_drink, "Feeding", () {
-                  Navigator.pushNamed(context, AppRoutes.feeding);
-                }),
-                _featureBox(context, Icons.vaccines, "Schedule", () {
-                  Navigator.pushNamed(context, AppRoutes.vaccines);
-                }),
+                _featureBox(context, Icons.bedtime, "Sleep",
+                    () => Navigator.pushNamed(context, AppRoutes.sleepTimer)),
+                _featureBox(context, Icons.local_drink, "Feeding",
+                    () => Navigator.pushNamed(context, AppRoutes.feeding)),
+                _featureBox(context, Icons.vaccines, "Schedule",
+                    () => Navigator.pushNamed(context, AppRoutes.vaccines)),
               ],
             ),
             const SizedBox(height: 20),
             ElevatedButton.icon(
-              onPressed: () {
-                Navigator.pushNamed(context, AppRoutes.status);
-              },
+              onPressed: () => Navigator.pushNamed(context, AppRoutes.status),
               icon: const Icon(Icons.analytics),
               label: const Text("Status"),
               style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
+                backgroundColor: color,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape:
+                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 elevation: 5,
               ),
             ),
@@ -272,7 +287,8 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  Widget _featureBox(BuildContext context, IconData icon, String label, VoidCallback onTap) {
+  Widget _featureBox(
+      BuildContext context, IconData icon, String label, VoidCallback onTap) {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
@@ -290,7 +306,8 @@ class _DashboardScreenState extends State<DashboardScreen>
             children: [
               Icon(icon, color: Theme.of(context).colorScheme.primary),
               const SizedBox(height: 8),
-              Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
+              Text(label,
+                  style: const TextStyle(fontWeight: FontWeight.w500)),
             ],
           ),
         ),
