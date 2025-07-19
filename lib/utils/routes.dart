@@ -4,9 +4,7 @@ import '../screens/monitoring_screen.dart';
 import '../screens/reports_screen.dart';
 import '../screens/appointments_screen.dart';
 import '../screens/data_entry_screen.dart';
-import '../screens/recommendations_screen.dart';
 import '../screens/settings_screen.dart';
-import '../screens/notifications_screen.dart';
 import '../screens/baby_cry_screen.dart';
 import '../screens/schedule_feeding_screen.dart';
 import '../screens/child_info_screen.dart';
@@ -46,9 +44,7 @@ class AppRoutes {
     reports: (context) => ReportsScreen(),
     appointments: (context) => AppointmentsScreen(),
     dataEntry: (context) => DataEntryScreen(),
-    recommendations: (context) => RecommendationsScreen(),
     settings: (context) => SettingsScreen(),
-    notifications: (context) => NotificationsScreen(),
     babySound: (context) {
       final authService = Provider.of<AuthService>(context, listen: false);
       return BabySoundScreen(authService: authService);

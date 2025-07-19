@@ -102,10 +102,15 @@ class AuthService with ChangeNotifier {
 
 
   // تحديث معرف الطفل المحدد + حفظ في SharedPreferences
-  Future<void> setSelectedBabyId(String id) async {
+  Future<void> setSelectedBabyId(String? id) async {
     _selectedBabyId = id;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('selected_baby_id', id);
+    if (id != null) {
+      await prefs.setString('selected_baby_id', id);
+    } else {
+      await prefs.remove('selected_baby_id');
+    }
+
     notifyListeners();
   }
 
@@ -125,7 +130,7 @@ class AuthService with ChangeNotifier {
     notifyListeners();
   }
 
-  // ✅ تسجيل حساب جديد
+  //  تسجيل حساب جديد
   Future<bool> registerUser({
     required String username,
     required String email,
@@ -150,7 +155,7 @@ class AuthService with ChangeNotifier {
       );
 
       if (response.statusCode == 201) {
-        // ✅ تسجيل الدخول تلقائيًا بعد التسجيل
+        // تسجيل الدخول تلقائيًا بعد التسجيل
         await login(email, password);
         return _isLoggedIn;
       } else {
@@ -164,7 +169,7 @@ class AuthService with ChangeNotifier {
     }
   }
 
-  // ✅ تسجيل الدخول التلقائي عند إعادة تشغيل التطبيق
+  //  تسجيل الدخول التلقائي عند إعادة تشغيل التطبيق
   Future<void> autoLogin() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
@@ -176,7 +181,7 @@ class AuthService with ChangeNotifier {
       _userId = prefs.getString('user_id');
       _selectedBabyId = babyId;
 
-      await fetchBabies(); // ✅ جلب الأطفال بعد تسجيل الدخول التلقائي
+      await fetchBabies(); //  جلب الأطفال بعد تسجيل الدخول التلقائي
 
       if (_babies.isNotEmpty && _selectedBabyId == null) {
         _selectedBabyId = _babies.first['_id'];
@@ -187,7 +192,7 @@ class AuthService with ChangeNotifier {
     }
   }
 
-  // ✅ الحصول على بيانات الطفل المحدد
+  //  الحصول على بيانات الطفل المحدد
   Map<String, dynamic>? get selectedBaby {
     if (_babies.isEmpty || _selectedBabyId == null) return null;
     return _babies.firstWhere(
@@ -196,7 +201,7 @@ class AuthService with ChangeNotifier {
     );
   }
 
-  // ✅ تحديث بيانات الطفل (مثل الاسم أو الجنس)
+  //  تحديث بيانات الطفل (مثل الاسم أو الجنس)
   Future<void> updateBabyInfo(String babyId, Map<String, dynamic> updatedData) async {
     final url = Uri.parse("http://localhost:3000/api/babies/info/$babyId");
     final token = _token;
@@ -214,7 +219,7 @@ class AuthService with ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        // ✅ تحديث البيانات المحلية
+        //  تحديث البيانات المحلية
         final updatedBaby = jsonDecode(response.body)['baby'];
         final index = _babies.indexWhere((baby) => baby['_id'] == babyId);
         if (index != -1) {
@@ -231,42 +236,53 @@ class AuthService with ChangeNotifier {
     }
   }
 
-  // ✅ إضافة طفل جديد
-  Future<bool> addNewBaby(Map<String, dynamic> babyData) async {
-    final url = Uri.parse("http://localhost:3000/api/users/baby");
-    final token = _token;
 
-    if (token == null || _userId == null) return false;
+  Future<void> loadSelectedBabyId() async {
+  final prefs = await SharedPreferences.getInstance();
+  _selectedBabyId = prefs.getString('selected_baby_id');
+}
 
-    babyData['user'] = _userId;
 
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          "Authorization": "Bearer $token",
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode(babyData),
-      );
+  //  إضافة طفل جديد
+Future<bool> addNewBaby(Map<String, dynamic> babyData) async {
+  final url = Uri.parse("http://localhost:3000/api/users/baby");
+  final token = _token;
 
-      if (response.statusCode == 201) {
-        final newBaby = jsonDecode(response.body)['baby'];
-        _babies.add(newBaby);
-        _selectedBabyId = newBaby['_id'];
-        notifyListeners();
-        return true;
-      } else {
-        print("Failed to add baby: ${jsonDecode(response.body)['message']}");
-        return false;
-      }
-    } catch (e) {
-      print("Error adding baby: $e");
+  if (token == null || _userId == null) return false;
+
+  babyData['user'] = _userId;
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode(babyData),
+    );
+
+    if (response.statusCode == 201) {
+      final newBaby = jsonDecode(response.body)['baby'];
+      _babies.add(newBaby);
+
+      // استخدم الدالة لتخزين babyId في SharedPreferences
+      await setSelectedBabyId(newBaby['_id']);
+
+      notifyListeners();
+      return true;
+    } else {
+      print("Failed to add baby: ${jsonDecode(response.body)['message']}");
       return false;
     }
+  } catch (e) {
+    print("Error adding baby: $e");
+    return false;
   }
+}
 
-  // ✅ الحصول على بيانات الطفل المحدد
+
+  //  الحصول على بيانات الطفل المحدد
   Future<Map<String, dynamic>?> getSelectedBaby() async {
     if (_token == null || _selectedBabyId == null) return null;
 

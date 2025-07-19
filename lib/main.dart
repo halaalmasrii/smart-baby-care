@@ -9,11 +9,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   tz.initializeTimeZones(); // ضروري قبل جدولة الإشعارات
 
+  final authService = AuthService();
+  await authService.autoLogin();            // تسجيل الدخول التلقائي
+  await authService.loadSelectedBabyId();   // ✅ تحميل معرف الطفل من SharedPreferences
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => AuthService()),
+        ChangeNotifierProvider<AuthService>.value(value: authService),
       ],
       child: const MyApp(),
     ),
