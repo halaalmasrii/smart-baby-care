@@ -4,13 +4,14 @@ import 'dart:io';
 import '../utils/routes.dart';
 import '../utils/validation_utils.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-import '../services/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
+import '../services/auth_service.dart';
+import 'dart:convert';
+
 
 class ChildInfoScreen extends StatefulWidget {
-  final VoidCallback? onSuccessCallback; // سيستخدم لتحديث البيانات فور الإضافة
+  final VoidCallback? onSuccessCallback;
 
   const ChildInfoScreen({Key? key, this.onSuccessCallback}) : super(key: key);
 
@@ -37,7 +38,7 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
     }
   }
 
-  void _submit() async {
+  Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
       if (_birthDate == null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -65,37 +66,35 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
 
       final uri = Uri.parse('http://localhost:3000/api/users/baby');
 
-      final body = {
-        "name": _nameController.text.trim(),
-        "birthDate": _birthDate!.toIso8601String(),
-        "gender": _gender,
-        "height": _heightController.text.trim(),
-        "weight": _weightController.text.trim(),
-      };
-
       try {
-        final response = await http.post(
-          uri,
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer $token",
-          },
-          body: jsonEncode(body),
-        );
+        final request = http.MultipartRequest('POST', uri);
+        request.headers['Authorization'] = 'Bearer $token';
+
+        request.fields['name'] = _nameController.text.trim();
+        request.fields['birthDate'] = _birthDate!.toIso8601String();
+        request.fields['gender'] = _gender;
+        request.fields['height'] = _heightController.text.trim();
+        request.fields['weight'] = _weightController.text.trim();
+
+        if (_imageFile != null) {
+          request.files.add(
+            await http.MultipartFile.fromPath('image', _imageFile!.path),
+          );
+        }
+
+        final streamedResponse = await request.send();
+        final response = await http.Response.fromStream(streamedResponse);
 
         if (response.statusCode == 201) {
           final babyData = jsonDecode(response.body)['baby'];
 
-          // تحديث البيانات في Provider
           await Provider.of<AuthService>(context, listen: false)
               .setSelectedBabyId(babyData['_id']);
 
-          // تنفيذ callback لتحديث البيانات في Dashboard
           if (widget.onSuccessCallback != null) {
-            widget.onSuccessCallback!(); //  سيُجدد البيانات في الشاشة الأم
+            widget.onSuccessCallback!();
           }
 
-          // أو التنقل إلى Dashboard مع تحديث البيانات
           Navigator.pushReplacementNamed(
             context,
             AppRoutes.dashboard,
@@ -144,8 +143,11 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
                   onTap: _pickImage,
                   child: CircleAvatar(
                     radius: 50,
-                    backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
-                    child: _imageFile == null ? const Icon(Icons.add_a_photo, size: 32) : null,
+                    backgroundImage:
+                        _imageFile != null ? FileImage(_imageFile!) : null,
+                    child: _imageFile == null
+                        ? const Icon(Icons.add_a_photo, size: 32)
+                        : null,
                   ),
                 ),
               if (!kIsWeb) const SizedBox(height: 16),
@@ -155,7 +157,9 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
                 decoration: const InputDecoration(labelText: 'Child Name'),
                 validator: (value) {
                   if (value!.isEmpty) return 'Enter child name';
-                  if (!ValidationUtils.isValidName(value)) return 'Name must be at least 3 letters';
+                  if (!ValidationUtils.isValidName(value)) {
+                    return 'Name must be at least 3 letters';
+                  }
                   return null;
                 },
               ),
@@ -186,7 +190,8 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
               DropdownButtonFormField<String>(
                 value: _gender,
                 items: ['Male', 'Female']
-                    .map((gender) => DropdownMenuItem(value: gender, child: Text(gender)))
+                    .map((gender) =>
+                        DropdownMenuItem(value: gender, child: Text(gender)))
                     .toList(),
                 onChanged: (value) => setState(() => _gender = value!),
                 decoration: const InputDecoration(labelText: 'Gender'),
@@ -199,8 +204,12 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
                 decoration: const InputDecoration(labelText: 'Height (cm)'),
                 validator: (value) {
                   if (value!.isEmpty) return 'Enter height';
-                  if (!ValidationUtils.isNumeric(value)) return 'Height must be a number';
-                  if (!ValidationUtils.isPositiveNumeric(value)) return 'Height must be a positive number';
+                  if (!ValidationUtils.isNumeric(value)) {
+                    return 'Height must be a number';
+                  }
+                  if (!ValidationUtils.isPositiveNumeric(value)) {
+                    return 'Height must be a positive number';
+                  }
                   return null;
                 },
               ),
@@ -212,8 +221,12 @@ class _ChildInfoScreenState extends State<ChildInfoScreen> {
                 decoration: const InputDecoration(labelText: 'Weight (kg)'),
                 validator: (value) {
                   if (value!.isEmpty) return 'Enter weight';
-                  if (!ValidationUtils.isNumeric(value)) return 'Weight must be a number';
-                  if (!ValidationUtils.isPositiveNumeric(value)) return 'Weight must be a positive number';
+                  if (!ValidationUtils.isNumeric(value)) {
+                    return 'Weight must be a number';
+                  }
+                  if (!ValidationUtils.isPositiveNumeric(value)) {
+                    return 'Weight must be a positive number';
+                  }
                   return null;
                 },
               ),
