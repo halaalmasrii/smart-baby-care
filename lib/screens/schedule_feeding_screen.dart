@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/appointment.dart';
-import '../utils/notification_utils.dart';
 import '../services/auth_service.dart';
 
 class FeedingScheduleScreen extends StatefulWidget {
@@ -72,13 +71,13 @@ class _FeedingScheduleScreenState extends State<FeedingScheduleScreen> {
     final success = await sendFeedingToServer(now);
 
     if (success) {
-      await fetchFeedingsFromServer(); // ✅ تحديث الواجهة بعد الحفظ
+      await fetchFeedingsFromServer();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Feeding time added')),
       );
 
-      await scheduleFeedingReminder(nextReminder, now);
+      await saveFeedingLocally(nextReminder, now); // تخزين بدون إشعار
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to save feeding')),
@@ -131,21 +130,17 @@ class _FeedingScheduleScreenState extends State<FeedingScheduleScreen> {
     }
   }
 
-  Future<void> scheduleFeedingReminder(DateTime reminderTime, DateTime feedingTime) async {
+  Future<void> saveFeedingLocally(DateTime reminderTime, DateTime feedingTime) async {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getStringList('appointments') ?? [];
-    final appointments = saved
-        .map((json) => Appointment.fromJson(jsonDecode(json)))
-        .toList();
+
+    final appointments = saved.map((json) => Appointment.fromJson(jsonDecode(json))).toList();
 
     final reminder = Appointment(
       type: AppointmentType.feeding,
       title: 'Feeding Reminder',
       date: reminderTime,
       times: [TimeOfDay.fromDateTime(reminderTime)],
-      recurrence: 'every_3_hours',
-      notifyAtTime: true,
-      lastFeeding: feedingTime,
     );
 
     final updated = [
@@ -155,7 +150,6 @@ class _FeedingScheduleScreenState extends State<FeedingScheduleScreen> {
 
     final updatedJson = updated.map((a) => jsonEncode(a.toJson())).toList();
     await prefs.setStringList('appointments', updatedJson);
-    await NotificationUtils.scheduleNotification(reminder);
   }
 
   @override
